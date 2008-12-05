@@ -4,3 +4,5 @@
 
 (require 'nd-common-settings)
 (require 'nd-global-keys)
+
+(require 'nd-ido-settings)
