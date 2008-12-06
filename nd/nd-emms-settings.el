@@ -18,5 +18,6 @@
 (setq emms-playlist-buffer-name "*Music*")
 (emms-add-directory-tree "/muz")
 
+(setq emms-cache-file "/tmp/emms.cache")
 
 (provide 'nd-emms-settings)
