@@ -10,3 +10,4 @@
 (require 'nd-emms-settings)
 (require 'nd-shell-settings)
 (require 'nd-git-settings)
+(require 'nd-dired-settings)

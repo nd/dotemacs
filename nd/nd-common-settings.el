@@ -1,5 +1,6 @@
 ;;;; common setup
 
+(add-to-list 'load-path "~/emacs/site-lisp")
 
 ;; no scrollbar
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
