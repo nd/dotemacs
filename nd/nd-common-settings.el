@@ -55,5 +55,8 @@
 ;; avoid mouse then typing
 (mouse-avoidance-mode 'banish)
 
+;; cutting and pasting uses the clipboard
+(setq x-select-enable-clipboard t)
+
 
 (provide 'nd-common-settings)
