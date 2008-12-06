@@ -20,5 +20,7 @@
 ;; cutting and pasting uses the clipboard
 (setq x-select-enable-clipboard t)
 
+;; autosave configuration
+(setq auto-save-list-file-prefix "/tmp/emacs/auto-save-list/.saves-")
 
 (provide 'nd-common-settings)
