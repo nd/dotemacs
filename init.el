@@ -5,4 +5,5 @@
 (require 'nd-common-settings)
 (require 'nd-global-keys)
 
+(require 'nd-decorations)
 (require 'nd-ido-settings)
