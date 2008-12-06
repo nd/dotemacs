@@ -8,3 +8,4 @@
 (require 'nd-decorations)
 (require 'nd-ido-settings)
 (require 'nd-emms-settings)
+(require 'nd-shell-settings)
