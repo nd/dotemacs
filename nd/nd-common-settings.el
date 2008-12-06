@@ -23,4 +23,14 @@
 ;; autosave configuration
 (setq auto-save-list-file-prefix "/tmp/emacs/auto-save-list/.saves-")
 
+;; backup settings
+(setq make-backup-files t)
+(setq backup-directory-alist '((".*" . "~/backup"))
+      delete-old-versions t
+      kept-new-versions 4
+      kept-old-versions 2)
+
+
+
+
 (provide 'nd-common-settings)
