@@ -3,6 +3,14 @@
 (setq ido-enable-flex-matching t)
 (ido-mode t)
 
+;; ido ignore buffers
+(setq ido-ignore-buffers 
+      '("^ " 
+        "\\*Music\\*"
+        "\\*Completions\\*"
+        "\\*magit-.*"
+        "\\*Buffer List\\*"))
+
 (defun nd-ido-keys ()
   "Add my keybindings for ido."
   (define-key ido-completion-map "\C-\M-h" 'ido-delete-backward-word-updir)
