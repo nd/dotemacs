@@ -31,6 +31,4 @@
       kept-old-versions 2)
 
 
-
-
 (provide 'nd-common-settings)

@@ -20,5 +20,10 @@
 ;; I don't use suspend-frame
 (global-unset-key "\C-x\C-z")
 
+;; scroll down
+(global-set-key "\C-z" '(lambda () (interactive) (scroll-down -1)))
+;; scroll up
+(global-set-key "\C-\M-z" '(lambda () (interactive) (scroll-down 1)))
+
 
 (provide 'nd-global-keys)
