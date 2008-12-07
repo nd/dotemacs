@@ -1,3 +1,4 @@
+;;;; ido settings
 
 (require 'ido)
 (setq ido-enable-flex-matching t)
