@@ -6,6 +6,8 @@
 
 (global-set-key "\C-x\C-k" 'kill-region)
 (global-set-key "\C-h"     'backward-delete-char-untabify)
+;; C-h delete backward char while search
+(define-key isearch-mode-map "\C-h" 'isearch-del-char)
 (global-set-key "\C-\M-h"  'backward-kill-word)
 
 ;; bindings for isearch-*-regexp
