@@ -11,3 +11,4 @@
 (require 'nd-shell-settings)
 (require 'nd-git-settings)
 (require 'nd-dired-settings)
+(require 'nd-woman-settings)
