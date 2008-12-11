@@ -37,5 +37,12 @@
         (bury-buffer)
       ad-do-it)))
 
+;; create directories automaticaly 
+;; if we open file in directory that doesn't exist yet
+(add-hook 'before-save-hook
+          '(lambda ()
+             (or (file-exists-p (file-name-directory buffer-file-name))
+                 (make-directory (file-name-directory buffer-file-name) t))))
+
 
 (provide 'nd-common-settings)
