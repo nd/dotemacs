@@ -115,10 +115,14 @@ as local variable in current dired buffer, so advice can read it."
         (in-history (dired-history-move-in-history?))
         (before-dir (dired-history-expand-dir-name
                      (dired-history-expand-dir-name dired-directory)))
+        (destination-dir (ad-get-arg 0))
 ;        (next-dir (dired-get-filename))
         )
 
-        ad-do-it
+    (message (concat "before: " before-dir))
+    (message (concat "dest: " destination-dir))
+
+    ad-do-it
 
     (if in-history
         ;;just copy old values of history and index:
