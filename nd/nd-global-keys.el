@@ -16,6 +16,8 @@
 (global-set-key "\M-%" 'query-replace-regexp)
 
 (global-set-key "\M-?" 'help-command)
+;; Help should search more than just commands (from emacs-starter-kit)
+(global-set-key "\M-?a" 'apropos) 
 
 ;; I don't use set-goal-column
 (global-unset-key "\C-x\C-n")
