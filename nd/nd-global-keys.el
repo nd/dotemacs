@@ -6,14 +6,20 @@
 
 (global-set-key "\C-x\C-k" 'kill-region)
 (global-set-key "\C-h"     'backward-delete-char-untabify)
+
 ;; C-h delete backward char while search
 (define-key isearch-mode-map "\C-h" 'isearch-del-char)
 (global-set-key "\C-\M-h"  'backward-kill-word)
 
-;; bindings for isearch-*-regexp
+;; bindings for search 
 (global-set-key "\C-s" 'isearch-forward-regexp)
 (global-set-key "\C-r" 'isearch-backward-regexp)
+(global-set-key "\C-\M-s" 'isearch-forward)
+(global-set-key "\C-\M-r" 'isearch-backward)
 (global-set-key "\M-%" 'query-replace-regexp)
+
+;; Completion that uses many different methods to find options.
+(global-set-key (kbd "M-/") 'hippie-expand)
 
 (global-set-key "\M-?" 'help-command)
 ;; Help should search more than just commands (from emacs-starter-kit)
