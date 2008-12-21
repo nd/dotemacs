@@ -1,7 +1,9 @@
 ;;;; ido settings
 
 (require 'ido)
-(setq ido-enable-flex-matching t)
+(setq ido-enable-flex-matching t
+      ido-use-filename-at-point t
+      ido-create-new-buffer 'always)
 (ido-mode t)
 
 ;; ido ignore buffers
