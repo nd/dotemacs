@@ -26,5 +26,4 @@
                    "*"))))
 (global-set-key  [(f4)] 'nd-shell)
 
-
 (provide 'nd-shell-settings)
