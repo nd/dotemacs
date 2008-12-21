@@ -26,5 +26,7 @@
                    "*"))))
 (global-set-key  [(f4)] 'nd-shell)
 
+(custom-set-faces
+ '(comint-highlight-prompt ((t (:foreground "dark blue" :weight ultra-bold)))))
 
 (provide 'nd-shell-settings)
