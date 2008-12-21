@@ -14,13 +14,23 @@
         "\\*magit-.*"
         "\\*Buffer List\\*"))
 
+;; use ido to open recent files using C-x C-r
+(recentf-mode +1)
+(defun recentf-ido-find-file ()
+  "Find a recent file using Ido."
+  (interactive)
+  (let ((file (ido-completing-read "Choose recent file: " recentf-list nil t)))
+    (when file
+      (find-file file))))
+(global-set-key "\C-x\C-r" 'recentf-ido-find-file)
+
 (defun nd-ido-keys ()
   "Add my keybindings for ido."
   (define-key ido-completion-map "\C-\M-h" 'ido-delete-backward-word-updir)
   (define-key ido-completion-map "\C-i"    'ido-copy-current-file-name)
-  (define-key ido-completion-map "\C-n" 'ido-next-match)
-  (define-key ido-completion-map "\C-p" 'ido-prev-match)
-  (define-key ido-completion-map " "    'ido-exit-minibuffer))
+  (define-key ido-completion-map "\C-n"    'ido-next-match)
+  (define-key ido-completion-map "\C-p"    'ido-prev-match)
+  (define-key ido-completion-map " "       'ido-exit-minibuffer))
 
 (add-hook 'ido-setup-hook 'nd-ido-keys)
 
