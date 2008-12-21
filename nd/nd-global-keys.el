@@ -12,11 +12,11 @@
 (global-set-key "\C-\M-h"  'backward-kill-word)
 
 ;; bindings for search 
-(global-set-key "\C-s" 'isearch-forward-regexp)
-(global-set-key "\C-r" 'isearch-backward-regexp)
+(global-set-key "\C-s"    'isearch-forward-regexp)
+(global-set-key "\C-r"    'isearch-backward-regexp)
 (global-set-key "\C-\M-s" 'isearch-forward)
 (global-set-key "\C-\M-r" 'isearch-backward)
-(global-set-key "\M-%" 'query-replace-regexp)
+(global-set-key "\M-%"    'query-replace-regexp)
 
 ;; revert buffer 
 (global-set-key (kbd "C-c r") 'revert-buffer)
