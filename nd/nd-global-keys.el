@@ -18,6 +18,9 @@
 (global-set-key "\C-\M-r" 'isearch-backward)
 (global-set-key "\M-%" 'query-replace-regexp)
 
+;; revert buffer 
+(global-set-key (kbd "C-c r") 'revert-buffer)
+
 ;; Completion that uses many different methods to find options.
 (global-set-key (kbd "M-/") 'hippie-expand)
 
