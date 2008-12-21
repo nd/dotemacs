@@ -4,6 +4,7 @@
        (shellname (concat "/bin/" name)))
   (setenv "ESHELL" shellname)
   (setenv "SHELL" shellname)
+  (setenv "PAGER" "cat")
   (setq shell-file-name shellname)
   (setq explicit-shell-file-name name))
 
