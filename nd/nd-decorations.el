@@ -47,5 +47,8 @@
 
 (set-frame-font "-xos4-terminus-medium-r-normal--14-140-72-72-c-80-*")
 
+(custom-set-faces
+ '(comint-highlight-prompt ((t (:foreground "dark blue" :weight ultra-bold)))))
+
 
 (provide 'nd-decorations)
