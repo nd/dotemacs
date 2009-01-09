@@ -13,3 +13,5 @@
 (require 'nd-dired-settings)
 (require 'nd-woman-settings)
 (require 'nd-environment-settings)
+(require 'nd-nxml-settings)
+

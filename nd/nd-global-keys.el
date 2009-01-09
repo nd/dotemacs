@@ -24,9 +24,9 @@
 ;; Completion that uses many different methods to find options.
 (global-set-key (kbd "M-/") 'hippie-expand)
 
-(global-set-key "\M-?" 'help-command)
+(global-set-key "\C-x\C-h" 'help-command)
 ;; Help should search more than just commands (from emacs-starter-kit)
-(global-set-key "\M-?a" 'apropos) 
+(global-set-key "\C-x\C-ha" 'apropos) 
 
 ;; I don't use set-goal-column
 (global-unset-key "\C-x\C-n")
