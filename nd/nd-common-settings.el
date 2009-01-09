@@ -23,6 +23,9 @@
 ;; autosave configuration
 (setq auto-save-list-file-prefix "/tmp/emacs/auto-save-list/.saves-")
 
+;; tramp history file
+(setq tramp-persistency-file-name "/home/nd/tmp/tramp")
+
 ;; backup settings
 (setq make-backup-files t)
 (setq backup-directory-alist '((".*" . "~/backup"))
