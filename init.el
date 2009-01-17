@@ -15,3 +15,5 @@
 (require 'nd-environment-settings)
 (require 'nd-nxml-settings)
 (require 'nd-scheme-settings)
+(require 'nd-server-settings)
+(require 'nd-gpg-settings)
