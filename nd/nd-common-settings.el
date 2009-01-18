@@ -1,6 +1,7 @@
 ;;;; common setup
 
 (add-to-list 'load-path "~/emacs/site-lisp")
+(add-to-list 'load-path "~/.emacs.d/vendor")
 
 ;; moving cursor down at bottom scrolls 
 ;; only a single line, not half page

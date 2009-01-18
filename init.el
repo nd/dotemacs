@@ -17,3 +17,4 @@
 (require 'nd-scheme-settings)
 (require 'nd-server-settings)
 (require 'nd-gpg-settings)
+(require 'nd-openwith-settings)
