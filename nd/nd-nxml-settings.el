@@ -17,12 +17,12 @@ Print each element and each text-content from new line"
     (save-match-data
       ;;make all open-tags end with new line
       (goto-char (point-min))
-      (while (re-search-forward ">" nil t)
-        (replace-match ">\n"))
+      (while (re-search-forward ">\\([^\n]\\)" nil t)
+        (replace-match ">\n\\1"))
 
       ;;make all close-tags start with new line
       (goto-char (point-min))
-      (while (re-search-forward "\\([^\n]\\)</" nil t)
+      (while (re-search-forward "^\\([^ ]\\)</" nil t)
         (replace-match "\\1\n</"))
 
       ;;remove new-lines from elements that contain only text (not other elements)
