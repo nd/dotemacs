@@ -42,6 +42,7 @@
 (setq display-time-24hr-format t
       display-time-form-list (list 'time)
       display-time-default-load-average nil
+      display-time-load-average-threshold 1
       display-time-day-and-date t)
 (display-time)
 
