@@ -40,10 +40,13 @@
 
 (load-library "time")
 (setq display-time-24hr-format t
-      display-time-mail-file t
-      display-time-form-list (list 'time 'load)
+      display-time-form-list (list 'time)
+      display-time-default-load-average nil
       display-time-day-and-date t)
 (display-time)
+
+(setq battery-mode-line-format " [%p%%%b,~%t] ")
+(display-battery-mode)
 
 (if (equal system-type 'gnu/linux)
     (set-frame-font "-xos4-terminus-medium-r-normal--14-140-72-72-c-80-*"))
