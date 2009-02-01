@@ -18,3 +18,4 @@
 (require 'nd-server-settings)
 (require 'nd-gpg-settings)
 (require 'nd-openwith-settings)
+(require 'nd-auto-complete-settings)
