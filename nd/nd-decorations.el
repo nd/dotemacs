@@ -50,7 +50,9 @@
 (display-battery-mode)
 
 (if (equal system-type 'gnu/linux)
-    (set-frame-font "-xos4-terminus-medium-r-normal--14-140-72-72-c-80-*"))
+    (set-default-font "Mono-8")
+;    (set-frame-font "-xos4-terminus-medium-r-normal--14-140-72-72-c-80-*")
+  )
 
 (custom-set-faces
  '(comint-highlight-prompt ((t (:foreground "dark blue" :weight ultra-bold)))))
