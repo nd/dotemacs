@@ -7,6 +7,7 @@
       (require 'emms-setup)
       (emms-standard)
       (emms-default-players)
+      (require 'emms-lastfm)
 
       (define-emms-simple-player mplayer '(file url)
         (concat "\\`\\(http\\|mms\\)://\\|"
@@ -29,6 +30,6 @@
       (emms-add-directory-tree "/muz")
       (emms-add-directory-tree "/video")
 
-      (setq emms-cache-file "/tmp/emms.cache")))
+      (setq emms-cache-file "~/.emacs.d/tmp/emms.cache")))
 
 (provide 'nd-emms-settings)
