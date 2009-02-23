@@ -19,3 +19,6 @@
 (require 'nd-gpg-settings)
 (require 'nd-openwith-settings)
 (require 'nd-auto-complete-settings)
+(require 'nd-dbus-settings)
+(require 'nd-elib-settings)
+(require 'nd-startup-settings)
