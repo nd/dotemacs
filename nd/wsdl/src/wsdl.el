@@ -92,7 +92,7 @@
              (car (filter ports 
                           (lambda (port) 
                             (invoke (invoke port 'get-name) 'equal (car args))))))
-            (t (error "Operation " message " is not supported"))))))
+            (t (error "Operation " (symbol-name message) " is not supported"))))))
 
 
 (defun wsdl/create-port (target-namespace ns-aliases port-node)
@@ -260,7 +260,7 @@
                    (t (and (equal this-namespace (invoke (car args) 'get-namespace))
                            (equal this-name (invoke (car args) 'get-localname))))))
             ((eq message 'to-string) (concat "{" this-namespace ":" this-name "}"))
-            (t (error "Operation is not supported"))))))
+            (t (error (concat "Operation '" (symbol-name message) "' is not supported")))))))
 
 
 (defun xml/get-namespace (qname)
@@ -341,7 +341,7 @@
          (error "in rpc binding message part should use type, not element")))
 
   (concat "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" 
-          "    <soapenv:Body>\n"
+          "<soapenv:Body>\n"
 
           (if (eq binding 'document)
               (concat "here soon will be request for message " (invoke (invoke message 'get-name) 'to-string) 
@@ -351,16 +351,16 @@
 ;                            (invoke message 'get-parts))
                     "</" (invoke operation 'get-name) ">\n"))
 
-          "    </soapenv:Body>\n"
+          "</soapenv:Body>\n"
           "</soapenv:Envelope>"))
 
 
 (defun xml/expand-qname (string-value targetNamespace ns-aliases)
   (let ((split-list (split-string string-value ":")))
-    (if (eq (length split-list) 2)
+    (if (and (not (null split-list)) (eq (length split-list) 2))
       (xml/new-qname (cdr (assoc (car split-list) ns-aliases))
                      (cadr split-list))
-    (xml/new-qname target-namespace string-value))))
+    (xml/new-qname targetNamespace string-value))))
 
 
 (defun util/select (object-list to-string-function prompt)
@@ -408,13 +408,14 @@
     (set-window-buffer (selected-window) buf)
     (insert request)
     (nxml-mode)
+    (indent-region (point-min) (point-max))
     buf))
 
 
 (defun xml/parse-document-at-location (location)
   (if (elt (url-generic-parse-url location) 1)
       ;;this is valid url.. do something
-      (do-something)
+      (xml/parse-file-from-location location)
     ;;asume this is local file path 
     (nxml-parse-file location)))
 
@@ -433,6 +434,28 @@
              location
            (concat (file-name-directory (expand-file-name base-location)) location)))))
  
+
+(defun xml/parse-file-from-location (location)
+  (let ((buf (url-retrieve-synchronously location))
+        (tmp-filename (make-temp-file "soap-request-builder")))
+    (set-buffer buf)
+    (xml/delete-http-header)
+    (set-visited-file-name tmp-filename t)
+    (save-buffer)
+    (let ((result(nxml-parse-file tmp-filename)))
+      (delete-file tmp-filename)
+      result)))
+
+
+(defun xml/delete-http-header ()
+  "Delete http header from current buffer"
+  (goto-char (point-min))
+  (while (not (looking-at "^$"))
+    (kill-line)
+    (next-line))
+  (next-line)
+  (delete-region (point) (point-min)))
+
 
 (provide 'wsdl)
 
