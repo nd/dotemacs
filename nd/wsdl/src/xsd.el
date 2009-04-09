@@ -51,7 +51,7 @@
             ((eq message 'get-sample)
              (let ((build-in-type (xsd/get-build-in-type type)))
                (if (not (null build-in-type))
-                   (invoke build-in-type 'get-sample name)
+                   (invoke build-in-type 'get-element-sample name)
                  (do-smth-else))))
 
             (t (error (concat "Operation '" (symbol-name message) "' is not supported")))))))
@@ -65,7 +65,9 @@
     (lambda (message &rest args)
       (cond ((eq message 'get-name) name)
 
-            ((eq message 'get-sample) 
+            ((eq message 'get-sample) sample)
+
+            ((eq message 'get-element-sample) 
              (let ((element-name (car args)))
                (concat
                 "<" (invoke element-name 'get-localname) ">\n" 
