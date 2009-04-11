@@ -4,7 +4,8 @@
 
   (let ((comment-element (invoke xsd 'get-element (xml/new-qname "http://bercut.com/types" "comment")))
         (purchaseOrder (invoke xsd 'get-element (xml/new-qname "http://bercut.com/types" "purchaseOrder")))
-        (skuElement (invoke xsd 'get-element (xml/new-qname "http://bercut.com/types" "skuElement"))))
+        (skuElement (invoke xsd 'get-element (xml/new-qname "http://bercut.com/types" "skuElement")))
+        (listOfString (invoke xsd 'get-element (xml/new-qname "http://bercut.com/types" "listOfString"))))
     (assert (not (null comment-element)) "comment element is null")
     (assert (equal (invoke comment-element 'get-sample) "<comment>string</comment>\n")
             "wrong element of build-in type")
@@ -12,7 +13,8 @@
     (assert (equal (invoke skuElement 'get-sample) "<skuElement>string</skuElement>\n")
             "wrong element of build-in type")
     
-    )
+     (assert (equal (invoke listOfString 'get-sample) "<listOfString>string</listOfString>\n")
+            "wrong element of build-in type"))
 
   'ok
   )

@@ -66,7 +66,8 @@
                  (targetNamespace targetNamespace)
                  (ns-aliases ns-aliases)
                  (name (xml/new-qname targetNamespace (xml/get-attribute-value node "name")))
-                 (restriction (car (xml/get-elements-by-name node '(:http://www.w3.org/2001/XMLSchema . "restriction")))))
+                 (restriction (car (xml/get-elements-by-name node '(:http://www.w3.org/2001/XMLSchema . "restriction"))))
+                 (list (car (xml/get-elements-by-name node '(:http://www.w3.org/2001/XMLSchema . "list")))))
 
     ;; dispatch function
     (lambda (message &rest args)
@@ -81,7 +82,15 @@
                              (build-in-type (xsd/get-build-in-type base)))
                         (if (not (null build-in-type))
                             (invoke build-in-type 'get-element-sample element-name)
-                          (invoke (invoke xsd 'get-type type) 'get-element-sample element-name))))
+                          (invoke (invoke xsd 'get-type base) 'get-element-sample element-name))))
+
+                     ((not (null list))
+                      (let* ((itemType (xml/expand-qname (xml/get-attribute-value list "itemType") 
+                                                         targetNamespace ns-aliases))
+                             (build-in-type (xsd/get-build-in-type itemType)))
+                        (if (not (null build-in-type))
+                            (invoke build-in-type 'get-element-sample element-name)
+                          (invoke (invoke xsd 'get-type itemType) 'get-element-sample element-name))))
 
                      (t (concat "sample of " (invoke name 'to-string) "\n")))))
 
