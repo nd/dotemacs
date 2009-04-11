@@ -76,7 +76,7 @@
             ((eq message 'get-element-sample) 
              (let ((element-name (car args)))
 
-               (cond ((not (null restriction))
+               (cond ((and restriction)
                       (let* ((base (xml/expand-qname (xml/get-attribute-value restriction "base") 
                                                      targetNamespace ns-aliases))
                              (build-in-type (xsd/get-build-in-type base)))
@@ -84,7 +84,7 @@
                             (invoke build-in-type 'get-element-sample element-name)
                           (invoke (invoke xsd 'get-type base) 'get-element-sample element-name))))
 
-                     ((not (null list))
+                     ((and list)
                       (let* ((itemType (xml/expand-qname (xml/get-attribute-value list "itemType") 
                                                          targetNamespace ns-aliases))
                              (build-in-type (xsd/get-build-in-type itemType)))
