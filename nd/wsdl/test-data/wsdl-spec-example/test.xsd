@@ -5,6 +5,8 @@
 
     <xsd:element name="purchaseOrder" type="PurchaseOrderType"/>
 
+    <xsd:element name="skuElement" type="SKU"/>
+
     <xsd:complexType name="PurchaseOrderType">
         <xsd:sequence>
             <xsd:element name="shipTo" type="USAddress"/>
