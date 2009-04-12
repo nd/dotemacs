@@ -272,23 +272,26 @@
 (defun xml/get-elements-by-name (parent-node name)
   (filter (nxml-node-children parent-node)
           (lambda (n)
-            (and (listp n)
-                 (funcall (xml/name-equal name) n)))))
+            (nxml/name-equal n name))))
+
 
 (defun xml/get-attribute-value (node attribute-name)
   (cdr (car (filter (nxml-node-attributes node)
                     (lambda (x) (equal (car x) attribute-name))))))
 
-(defun xml/name-equal (name)
-  (lambda (node)
-    (let ((node-name (nxml-node-name node)))
-      (cond ((and (stringp node-name) (stringp name))
-             (equal node-name name))
-            ((and (listp node-name) (listp name))
-             (and (equal (symbol-name (car name))
-                         (symbol-name (car node-name)))
-                  (equal (cdr name) (cdr node-name))))
-            (t nil)))))
+
+(defun nxml/name-equal (node name)
+  (let ((node-name (nxml-node-name node)))
+    (cond ((and (stringp node-name) (stringp name))
+           (equal node-name name))
+
+          ((and (listp node-name) (listp name))
+           (and (equal (symbol-name (car name))
+                       (symbol-name (car node-name)))
+                (equal (cdr name) (cdr node-name))))
+
+          (t nil))))
+
 
 (defun xml/get-ns-aliases (node)
   (let ((attributes (nxml-node-attributes node)))
@@ -314,7 +317,7 @@
   (cadr nxml-node))
 
 (defun nxml-node-children (nxml-node)
-  (cddr nxml-node))
+  (filter (cddr nxml-node) (lambda (n) (listp n))))
 
 (defun filter (list predicat)
   "TODO: make it better"

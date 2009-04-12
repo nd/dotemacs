@@ -9,12 +9,14 @@
 
     <xsd:element name="listOfString" type="ListOfString"/>
 
+    <xsd:element name="usAddress" type="USAddress"/>
+
     <xsd:complexType name="PurchaseOrderType">
         <xsd:sequence>
             <xsd:element name="shipTo" type="USAddress"/>
             <xsd:element name="billTo" type="USAddress"/>
             <xsd:element ref="comment" minOccurs="0"/>
-            <xsd:element name="items"  type="Items"/>
+            <!--xsd:element name="items"  type="Items"/-->
         </xsd:sequence>
         <xsd:attribute name="orderDate" type="xsd:date"/>
     </xsd:complexType>
