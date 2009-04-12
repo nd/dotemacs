@@ -16,9 +16,11 @@
     (assert (equal (invoke listOfString 'get-sample) "<listOfString>string</listOfString>\n")
             "wrong element of build-in type")
 
-    (invoke usAddress 'get-sample)
-    (invoke purchaseOrder 'get-sample)
-    )
+;    (assert (equal (invoke usAddress 'get-sample)
+;                   "<usAddress>\n<name>string</name>\n<street>string</street>\n<city>string</city>\n<state>string</state>\n<zip>1.0</zip>\n</usAddress>\n")
+;                   "wrong sample of element of complexType")
 
-  'ok
+    (invoke purchaseOrder 'get-sample))
+
+;  'ok
 )

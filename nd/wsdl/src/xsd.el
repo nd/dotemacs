@@ -4,7 +4,9 @@
 (defconst build-in-types
   (list 
    (xsd/create-build-in-type (xml/new-qname "http://www.w3.org/2001/XMLSchema" "string") "string")
-   (xsd/create-build-in-type (xml/new-qname "http://www.w3.org/2001/XMLSchema" "decimal") "1.0")))
+   (xsd/create-build-in-type (xml/new-qname "http://www.w3.org/2001/XMLSchema" "decimal") "1.0")
+   (xsd/create-build-in-type (xml/new-qname "http://www.w3.org/2001/XMLSchema" "date") "1999-05-31")
+   (xsd/create-build-in-type (xml/new-qname "http://www.w3.org/2001/XMLSchema" "NMTOKEN") "US")))
 
 
 (defun xsd/create-xsd (location)
@@ -35,6 +37,7 @@
 
     (defmethod xsd 'get-type
       (lambda (type-name)
+;        (message "get type " (invoke type-name 'to-string))
         (car (filter (append (this. 'simpleTypes) (this. 'complexTypes) build-in-types)
                      (lambda (type) 
                        (invoke (invoke type 'get-name) 'equal type-name))))))
@@ -116,7 +119,12 @@
                  (xsd xsd)
                  (name (xml/new-qname targetNamespace (xml/get-attribute-value node "name")))
                  (sequence (car (xml/get-elements-by-name node '(:http://www.w3.org/2001/XMLSchema . "sequence"))))
-                 (content (xml/get-elements-by-name sequence '(:http://www.w3.org/2001/XMLSchema . "element"))))
+                 (content (xml/get-elements-by-name 
+                           sequence
+                           '(:http://www.w3.org/2001/XMLSchema . "element")))
+                 (attributes (xml/get-elements-by-name
+                              node
+                              '(:http://www.w3.org/2001/XMLSchema . "attribute"))))
 
     ;; dispatch function
     (lambda (message &rest args)
@@ -126,7 +134,15 @@
              (let ((element-name (car args)))
                   
                (concat
-                "<" (invoke element-name 'get-localname) ">\n" 
+                "<" (invoke element-name 'get-localname) 
+
+                (apply 'concat
+                       (mapcar 
+                        (lambda (att-node) 
+                          (invoke (xsd/create-attribute targetNamespace ns-aliases att-node xsd) 'get-sample))
+                        attributes))
+
+                ">\n" 
                 (apply 'concat 
 
                        (mapcar
@@ -144,6 +160,31 @@
                         content))
                 "</" (invoke element-name 'get-localname) ">\n")
                ))
+
+            (t (error (concat "Operation '" (symbol-name message) "' is not supported")))))))
+
+
+(defun xsd/create-attribute (targetNamespace ns-aliases attribute-node xsd)
+  "Create xsd attribute from it's node"
+  (lexical-let* ((node attribute-node)
+                 (name (xml/new-qname targetNamespace (xml/get-attribute-value node "name")))
+                 (xsd xsd)
+                 (type 
+                  (and (xml/get-attribute-value node "type")
+                       (xml/expand-qname (xml/get-attribute-value node "type") targetNamespace ns-aliases))))
+
+    ;; dispatch function
+    (lambda (message)
+      (cond ((eq message 'get-name) name)
+
+            ((eq message 'get-type) type)
+
+            ((eq message 'get-sample)
+             (let ((att-type (invoke xsd 'get-type type)))
+               (concat " " (invoke name 'get-localname) "=" 
+                     "\""
+                     (invoke att-type 'get-sample)
+                     "\"")))
 
             (t (error (concat "Operation '" (symbol-name message) "' is not supported")))))))
 
