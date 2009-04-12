@@ -340,8 +340,9 @@
               (invoke (car (invoke message 'get-parts)) 'use-type?))
          (error "in document binding message part should use element, not type"))
         ((and (eq binding 'rpc)
-              (not (invoke (car (invoke message 'get-parts)) 'use-type?)))
-         (error "in rpc binding message part should use type, not element")))
+              (not (invoke (car (invoke message 'get-parts)) 'use-type?))
+              (length (invoke message 'get-parts)))
+         (error "in rpc binding if message part use element should be only one part")))
 
   (concat "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" 
           "<soapenv:Body>\n"
