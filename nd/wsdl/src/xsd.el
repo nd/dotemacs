@@ -11,10 +11,12 @@
    (xsd/create-build-in-type (xml/new-qname "http://www.w3.org/2001/XMLSchema" "NMTOKEN") "US")))
 
 
-(defun xsd/create-xsd (location)
+(defun xsd/create-xsd (location-or-node)
   "Create xsd from it's node"
   (let* ((xsd (create-object))
-        (schema-node (xml/parse-document-at-location location))
+        (schema-node (if (listp location-or-node)
+                         (xml/parse-document-at-location location-or-node)
+                       (xml/parse-document-at-location location-or-node)))
         (targetNamespace (xml/get-attribute-value schema-node "targetNamespace"))
         (ns-aliases (xml/get-ns-aliases schema-node)))
 
@@ -43,6 +45,9 @@
         (car (filter (append (this. 'simpleTypes) (this. 'complexTypes) build-in-types)
                      (lambda (type) 
                        (invoke (invoke type 'get-name) 'equal type-name))))))
+
+    (defmethod xsd 'get-targetNamespace
+      (lambda () (this. 'targetNamespace)))
 
     xsd))
 
