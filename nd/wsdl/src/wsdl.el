@@ -252,13 +252,12 @@
   (concat "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" 
           "<soapenv:Body>\n"
 
-          (if (eq binding 'document)
-              (concat "here soon will be request for message " (invoke (invoke message 'get-name) 'to-string) 
-                      " in " (symbol-name binding) " binding\n")
-            (concat "<"  (invoke operation 'get-name) " xmlns=\"some-namespace\">\n"
-;                    (mapcar (lambda (part) "bla-bla\n")
-;                            (invoke message 'get-parts))
-                    "</" (invoke operation 'get-name) ">\n"))
+          (cond ((eq binding 'document)
+                 (concat "here soon will be request for message " (invoke (invoke message 'get-name) 'to-string) 
+                         " in " (symbol-name binding) " binding\n"))
+                ((eq binding 'rpc)
+                 (concat "<"  (invoke operation 'get-name) " xmlns=\"some-namespace\">\n"
+                         "</" (invoke operation 'get-name) ">\n")))
 
           "</soapenv:Body>\n"
           "</soapenv:Envelope>"))
