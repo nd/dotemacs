@@ -22,7 +22,7 @@
        (xsds
         (mapcar (lambda (schema-node) (xsd/create-xsd schema-node))
                 (xml/get-elements-by-name 
-                 (xml/get-elements-by-name xml '(:http://schemas.xmlsoap.org/wsdl/ . "types"))
+                 (car (xml/get-elements-by-name xml '(:http://schemas.xmlsoap.org/wsdl/ . "types")))
                  '(:http://www.w3.org/2001/XMLSchema . "schema"))))
 
        (messages 
@@ -54,7 +54,8 @@
 
     ;; dispatch function
     (lambda (message &rest args) 
-      (cond ((eq message 'get-messages) messages)
+      (cond ((eq message 'get-targetNamespace) targetNamespace)
+            ((eq message 'get-messages) messages)
             ((eq message 'get-services) services)
             ((eq message 'get-bindings) bindings)
             ((eq message 'get-portTypes) portTypes)
@@ -71,7 +72,18 @@
              (car (filter messages
                           (lambda (message) 
                             (invoke (invoke message 'get-name) 'equal (car args))))))
-            ((eq message 'create-request) (error "not implemented yet"))
+            ((eq message 'get-element)
+             (invoke (car (filter xsds
+                                  (lambda (xsd)
+                                    (equal (invoke xsd 'get-targetNamespace) 
+                                           (invoke (car args) 'get-name)))))
+                     'get-element (car args)))
+            ((eq message 'get-type)
+             (invoke (car (filter xsds
+                                  (lambda (xsd)
+                                    (equal (invoke xsd 'get-targetNamespace) 
+                                           (invoke (car args) 'get-namespace)))))
+                     'get-type (car args)))
             ;;port + operation
             (t (error (concat "Operation " (symbol-name message)  " is not supproted")))))))
 
@@ -233,7 +245,7 @@
   (invoke wsdl 'get-messages))
 
 
-(defun create-soap-request (message operation binding)
+(defun create-soap-request (message operation binding wsdl)
   "Create string that contains soap-request for this message in
   this binding" 
 
@@ -253,11 +265,27 @@
           "<soapenv:Body>\n"
 
           (cond ((eq binding 'document)
-                 (concat "here soon will be request for message " (invoke (invoke message 'get-name) 'to-string) 
-                         " in " (symbol-name binding) " binding\n"))
+                 (let ((element (invoke wsdl 'get-element)))
+                   (invoke element 'get-sample (invoke message 'get-name))))
+
+;                 (concat "here soon will be request for message " (invoke (invoke message 'get-name) 'to-string) 
+;                         " in " (symbol-name binding) " binding\n"))
                 ((eq binding 'rpc)
-                 (concat "<"  (invoke operation 'get-name) " xmlns=\"some-namespace\">\n"
-                         "</" (invoke operation 'get-name) ">\n")))
+                 (if (invoke (car (invoke message 'get-parts)) 'use-type?)
+                     (concat "<"  (invoke operation 'get-name) " xmlns=\"" (invoke wsdl 'get-targetNamespace) "\">\n"
+                             (apply 'concat 
+                                    (mapcar 
+                                     (lambda (part) 
+                                       (let* ((part-name (invoke part 'get-name))
+                                              (type-name (invoke part 'get-typename))
+                                              (type (invoke wsdl 'get-type type-name)))
+                                         (invoke type 'get-element-sample part-name)))
+                                     (invoke message 'get-parts)))
+                             "</" (invoke operation 'get-name) ">\n")
+                   (progn
+                     ))
+
+                 ))
 
           "</soapenv:Body>\n"
           "</soapenv:Envelope>"))
@@ -281,7 +309,10 @@
                                  "Operation: "))
          (input (invoke operation 'get-input))
          (message (invoke wsdl 'get-message (invoke input 'get-message-name)))
-         (request (create-soap-request message operation (invoke binding 'get-operation-binding-style operation)))
+         (request (create-soap-request message 
+                                       operation
+                                       (invoke binding 'get-operation-binding-style operation)
+                                       wsdl))
          (buf (set-buffer (get-buffer-create (generate-new-buffer-name "*soap-request*")))))
     
     (set-window-buffer (selected-window) buf)

@@ -3,6 +3,25 @@
 
 (require 'util)
 
+(defun xsd/create-build-in-type (name sample)
+  (lexical-let* ((name name)
+                 (sample sample))
+
+    ;; dispatch function
+    (lambda (message &rest args)
+      (cond ((eq message 'get-name) name)
+
+            ((eq message 'get-sample) sample)
+
+            ((eq message 'get-element-sample) 
+             (let ((element-name (car args)))
+               (concat
+                "<" (invoke element-name 'get-localname) ">" 
+                sample 
+                "</" (invoke element-name 'get-localname) ">\n" )))
+
+            (t (error (concat "Operation '" (symbol-name message) "' is not supported")))))))
+
 (defconst build-in-types
   (list 
    (xsd/create-build-in-type (xml/new-qname "http://www.w3.org/2001/XMLSchema" "string") "string")
@@ -14,11 +33,11 @@
 (defun xsd/create-xsd (location-or-node)
   "Create xsd from it's node"
   (let* ((xsd (create-object))
-        (schema-node (if (listp location-or-node)
-                         (xml/parse-document-at-location location-or-node)
-                       (xml/parse-document-at-location location-or-node)))
-        (targetNamespace (xml/get-attribute-value schema-node "targetNamespace"))
-        (ns-aliases (xml/get-ns-aliases schema-node)))
+         (schema-node (if (listp location-or-node)
+                          location-or-node
+                        (xml/parse-document-at-location location-or-node)))
+         (targetNamespace (xml/get-attribute-value schema-node "targetNamespace"))
+         (ns-aliases (xml/get-ns-aliases schema-node)))
 
     (set-prop xsd 'schema-node schema-node)
     (set-prop xsd 'targetNamespace targetNamespace)
@@ -41,10 +60,10 @@
 
     (defmethod xsd 'get-type
       (lambda (type-name)
-;        (message "get type " (invoke type-name 'to-string))
-        (car (filter (append (this. 'simpleTypes) (this. 'complexTypes) build-in-types)
+        (message (concat "xsd.get-type: " (invoke type-name 'to-string)))
+        (or (car (filter (append (this. 'simpleTypes) (this. 'complexTypes) build-in-types)
                      (lambda (type) 
-                       (invoke (invoke type 'get-name) 'equal type-name))))))
+                       (invoke (invoke type 'get-name) 'equal type-name)))))))
 
     (defmethod xsd 'get-targetNamespace
       (lambda () (this. 'targetNamespace)))
@@ -55,6 +74,7 @@
 (defun xsd/create-element (targetNamespace ns-aliases element-node xsd)
   "Create xsd element from it's node"
   (lexical-let* ((node element-node)
+                 (xsd xsd)
                  (name (xml/new-qname targetNamespace (xml/get-attribute-value node "name")))
                  (type 
                   (if (xml/get-attribute-value node "type")
@@ -62,13 +82,13 @@
                     nil)))
 
     ;; dispatch function
-    (lambda (message)
+    (lambda (message &rest args)
       (cond ((eq message 'get-name) name)
 
             ((eq message 'get-type) type)
 
             ((eq message 'get-sample)
-             (invoke (invoke xsd 'get-type type) 'get-element-sample name))
+             (invoke (invoke xsd 'get-type type) 'get-element-sample (or (car args) name)))
 
             (t (error (concat "Operation '" (symbol-name message) "' is not supported")))))))
 
@@ -157,7 +177,7 @@
                           (cond ((xml/get-attribute-value n "name")
                                  (invoke (xsd/create-element targetNamespace ns-aliases n xsd) 'get-sample))
                                 
-                                ((xml/get-attribute-value n "ref")
+                                ((not (null (xml/get-attribute-value n "ref")))
                                  (invoke (invoke xsd 'get-element
                                                  (xml/expand-qname
                                                   (xml/get-attribute-value n "ref")
@@ -175,7 +195,7 @@
   "Create xsd attribute from it's node"
   (lexical-let* ((node attribute-node)
                  (name (xml/new-qname targetNamespace (xml/get-attribute-value node "name")))
-                 (xsd xsd)
+                 (cur-xsd xsd)
                  (type 
                   (and (xml/get-attribute-value node "type")
                        (xml/expand-qname (xml/get-attribute-value node "type") targetNamespace ns-aliases))))
@@ -187,31 +207,11 @@
             ((eq message 'get-type) type)
 
             ((eq message 'get-sample)
-             (let ((att-type (invoke xsd 'get-type type)))
+             (let ((att-type (invoke cur-xsd 'get-type type)))
                (concat " " (invoke name 'get-localname) "=" 
                      "\""
                      (invoke att-type 'get-sample)
                      "\"")))
-
-            (t (error (concat "Operation '" (symbol-name message) "' is not supported")))))))
-
-
-(defun xsd/create-build-in-type (name sample)
-  (lexical-let* ((name name)
-                 (sample sample))
-
-    ;; dispatch function
-    (lambda (message &rest args)
-      (cond ((eq message 'get-name) name)
-
-            ((eq message 'get-sample) sample)
-
-            ((eq message 'get-element-sample) 
-             (let ((element-name (car args)))
-               (concat
-                "<" (invoke element-name 'get-localname) ">" 
-                sample 
-                "</" (invoke element-name 'get-localname) ">\n" )))
 
             (t (error (concat "Operation '" (symbol-name message) "' is not supported")))))))
 

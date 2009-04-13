@@ -9,7 +9,8 @@
 
     <types>
         <xsd:schema targetNamespace="http://example.com/stockquote.xsd"
-                    xmlns:tns="http://example.com/stockquote.xsd">
+                    xmlns:tns="http://example.com/stockquote.xsd"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
             <xsd:element name="comment" type="xsd:string"/>
             <xsd:element name="purchaseOrder" type="tns:PurchaseOrderType"/>
 
@@ -18,7 +19,7 @@
                     <xsd:element name="shipTo" type="tns:USAddress"/>
                     <xsd:element name="billTo" type="tns:USAddress"/>
                     <xsd:element ref="tns:comment" minOccurs="0"/>
-                    <xsd:element name="items"  type="tns:Items"/>
+                    <!--xsd:element name="items"  type="tns:Items"/-->
                 </xsd:sequence>
                 <xsd:attribute name="orderDate" type="xsd:date"/>
             </xsd:complexType>
@@ -67,11 +68,12 @@
     </types>
     
     <message name="GetLastTradePriceInput">
-        <part name="body" type="xsd1:comment"/>
+        <part name="order" type="xsd1:PurchaseOrderType"/>
+        <part name="address" type="xsd1:USAddress"/>
     </message>
 
     <message name="GetLastTradePriceOutput">
-        <part name="body" type="xsd1:comment"/>
+        <part name="body" type="xsd1:USAddress"/>
     </message>
     <portType name="StockQuotePortType">
         <operation name="GetLastTradePrice">
