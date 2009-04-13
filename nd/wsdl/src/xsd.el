@@ -1,6 +1,8 @@
 ;;;; xsd parser
 
 
+(require 'util)
+
 (defconst build-in-types
   (list 
    (xsd/create-build-in-type (xml/new-qname "http://www.w3.org/2001/XMLSchema" "string") "string")

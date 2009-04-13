@@ -1,4 +1,6 @@
 (require 'cl)
+(require 'util)
+(require 'wsdl)
 
 (defun empty? (list)
   (null list))
@@ -15,41 +17,35 @@
 
   (let* ((message1 (car messages))
          (message2 (cadr messages))
-         (part1    (car (wsdl/get-parts message1)))
-         (part2    (car (wsdl/get-parts message2))))
+         (part1    (car (invoke message1 'get-parts)))
+         (part2    (car (invoke message2 'get-parts))))
     ;; check qnames:
-    (assert (equal (xml/get-localname (wsdl/get-name message1)) "GetLastTradePriceInput") t 
+    (assert (equal (invoke (invoke message1 'get-name) 'get-localname) "GetLastTradePriceInput") t 
             "wrong message name")
-    (assert (equal (xml/get-namespace (wsdl/get-name message1)) "http://example.com/stockquote.wsdl") t 
+    (assert (equal (invoke (invoke message1 'get-name) 'get-namespace) "http://example.com/stockquote.wsdl") t 
             "wrong message namespace")
-    (assert (equal (xml/get-localname (wsdl/get-name message2)) "GetLastTradePriceOutput") t 
+    (assert (equal (invoke (invoke message2 'get-name) 'get-localname) "GetLastTradePriceOutput") t 
             "wrong message name")
-    (assert (equal (xml/get-namespace (wsdl/get-name message2)) "http://example.com/stockquote.wsdl") t 
+    (assert (equal (invoke (invoke message2 'get-name) 'get-namespace) "http://example.com/stockquote.wsdl") t 
             "wrong message namespace")
 
     ;;check parts:
 
-    (assert (eq (length (wsdl/get-parts message1)) 1) t "message should have only one part")
-    (assert (eq (length (wsdl/get-parts message2)) 1) t "message should have only one part")
+    (assert (eq (length (invoke message1 'get-parts)) 1) t "message should have only one part")
+    (assert (eq (length (invoke message2 'get-parts)) 1) t "message should have only one part")
 
-    (assert (equal (xml/get-localname (wsdl/get-name (car (wsdl/get-parts message1)))) "body")
+    (assert (equal (invoke (invoke (car (invoke message1 'get-parts)) 'get-name) 'get-localname) "body")
             "wrong part name")
-    (assert (equal (xml/get-localname (wsdl/get-name (car (wsdl/get-parts message2)))) "body")
+    (assert (equal (invoke (invoke (car (invoke message2 'get-parts)) 'get-name) 'get-localname) "body")
             "wrong part name")
 
-    (assert (equal (xml/get-namespace (invoke part1 'get-typename)) "http://example.com/stockquote.xsd"))
-    (assert (equal (xml/get-localname (invoke part1 'get-typename)) "comment"))
-    (assert (equal (xml/get-namespace (invoke part2 'get-typename)) "http://example.com/stockquote.xsd"))
-    (assert (equal (xml/get-localname (invoke part2 'get-typename)) "comment"))
+    (assert (equal (invoke (invoke part1 'get-typename) 'get-namespace) "http://example.com/stockquote.xsd"))
+    (assert (equal (invoke (invoke part1 'get-typename) 'get-localname) "comment"))
+    (assert (equal (invoke (invoke part2 'get-typename) 'get-namespace) "http://example.com/stockquote.xsd"))
+    (assert (equal (invoke (invoke part2 'get-typename) 'get-localname) "comment"))
     (assert (equal (invoke part1 'use-type?) 't))
     (assert (equal (invoke part2 'use-type?) 't))
 
     )
 
   'ok)
-
-
-
-
-
-
