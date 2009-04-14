@@ -27,7 +27,9 @@
    (xsd/create-build-in-type (xml/new-qname "http://www.w3.org/2001/XMLSchema" "string") "string")
    (xsd/create-build-in-type (xml/new-qname "http://www.w3.org/2001/XMLSchema" "decimal") "1.0")
    (xsd/create-build-in-type (xml/new-qname "http://www.w3.org/2001/XMLSchema" "date") "1999-05-31")
-   (xsd/create-build-in-type (xml/new-qname "http://www.w3.org/2001/XMLSchema" "NMTOKEN") "US")))
+   (xsd/create-build-in-type (xml/new-qname "http://www.w3.org/2001/XMLSchema" "NMTOKEN") "US")
+   (xsd/create-build-in-type (xml/new-qname "http://www.w3.org/2001/XMLSchema" "int") "1")
+   (xsd/create-build-in-type (xml/new-qname "http://www.w3.org/2001/XMLSchema" "dateTime") "1999-05-31T13:20:00.000-05:00")))
 
 
 (defun xsd/create-xsd (location-or-node)
@@ -60,10 +62,9 @@
 
     (defmethod xsd 'get-type
       (lambda (type-name)
-        (message (concat "xsd.get-type: " (invoke type-name 'to-string)))
-        (or (car (filter (append (this. 'simpleTypes) (this. 'complexTypes) build-in-types)
+        (car (filter (append (this. 'simpleTypes) (this. 'complexTypes) build-in-types)
                      (lambda (type) 
-                       (invoke (invoke type 'get-name) 'equal type-name)))))))
+                       (invoke (invoke type 'get-name) 'equal type-name))))))
 
     (defmethod xsd 'get-targetNamespace
       (lambda () (this. 'targetNamespace)))
@@ -80,7 +81,7 @@
                   (if (xml/get-attribute-value node "type")
                       (xml/expand-qname (xml/get-attribute-value node "type") targetNamespace ns-aliases)
                     nil)))
-
+    (message (concat "create element " (invoke name 'to-string)))
     ;; dispatch function
     (lambda (message &rest args)
       (cond ((eq message 'get-name) name)

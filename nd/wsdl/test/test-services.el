@@ -38,3 +38,6 @@
     )
   
   'ok)
+
+
+(let* ((wsdl (wsdl/create-wsdl "http://127.0.0.1:4040/SeTestBpelSend/SeTestSendPort?wsdl"))))

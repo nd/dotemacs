@@ -101,10 +101,16 @@
 
 (defun xml/expand-qname (string-value targetNamespace ns-aliases)
   (let ((split-list (split-string string-value ":")))
-    (if (and (not (null split-list)) (eq (length split-list) 2))
-      (xml/new-qname (cdr (assoc (car split-list) ns-aliases))
-                     (cadr split-list))
-    (xml/new-qname targetNamespace string-value))))
+    (if (and (not (null split-list)) (eq (length split-list) 2)) ;;in form prefix:name
+        (let* ((prefix (car split-list))
+               (name (cadr split-list))
+               (resolved? (assoc prefix ns-aliases)))
+          (if resolved?
+              (xml/new-qname (cdr (assoc prefix ns-aliases)) name)
+            (cond ((equal prefix "tns") (xml/new-qname targetNamespace name))
+                  ((equal prefix "xsd") (xml/new-qname "http://www.w3.org/2001/XMLSchema" name))
+                  (t (error (concat "Unknown prefix " prefix " at " string-value))))))
+      (xml/new-qname targetNamespace string-value))))
 
 (defun util/select (object-list to-string-function prompt)
   "Select from item from object-list presented at minibuffer using ido"
@@ -127,13 +133,15 @@
     (gethash selection map)))
 
 (defun xml/parse-document-at-location (location)
-  (if (or (equal (elt (url-generic-parse-url location) 1) "http")
-          (equal (elt (url-generic-parse-url location) 1) "https")
-          (equal (elt (url-generic-parse-url location) 1) "ftp"))
-      ;;this is valid url.. do something
-      (xml/parse-file-from-location location)
-    ;;asume this is local file path 
-    (nxml-parse-file location)))
+  (let ((url (url-generic-parse-url location)))
+    (if (or (equal (elt url 1) "http")
+            (equal (elt url 1) "https")
+            (equal (elt url 1) "ftp")
+            (equal (elt url 1) "file"))
+        ;;this is valid url
+        (xml/parse-file-from-location location)
+      ;;asume this is local file path 
+      (nxml-parse-file location))))
 
 (defun xml/expand-location (location base-location)
   "Expand location from import"
@@ -164,9 +172,9 @@
 (defun xml/delete-http-header ()
   "Delete http header from current buffer"
   (goto-char (point-min))
-  (while (not (looking-at "^$"))
-    (kill-line)
-    (next-line))
+  (when (looking-at "^HTTP/1.* 200 OK$")
+        (re-search-forward "^$" nil t 1)
+        (setq headers (buffer-substring-no-properties (point-min) (point))))
   (next-line)
   (delete-region (point) (point-min)))
 

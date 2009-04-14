@@ -76,7 +76,7 @@
              (invoke (car (filter xsds
                                   (lambda (xsd)
                                     (equal (invoke xsd 'get-targetNamespace) 
-                                           (invoke (car args) 'get-name)))))
+                                           (invoke (car args) 'get-namespace)))))
                      'get-element (car args)))
             ((eq message 'get-type)
              (invoke (car (filter xsds
@@ -258,7 +258,7 @@
          (error "in document binding message part should use element, not type"))
         ((and (eq binding 'rpc)
               (not (invoke (car (invoke message 'get-parts)) 'use-type?))
-              (length (invoke message 'get-parts)))
+              (not (eql (length (invoke message 'get-parts)) 1)))
          (error "in rpc binding if message part use element should be only one part")))
 
   (concat "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" 
@@ -282,20 +282,21 @@
                                          (invoke type 'get-element-sample part-name)))
                                      (invoke message 'get-parts)))
                              "</" (invoke operation 'get-name) ">\n")
-                   (progn
-                     ))
-
-                 ))
+                   
+                   (let ((type-name (invoke (car (invoke message 'get-parts)) 'get-typename)))
+                     (message (invoke type-name 'to-string))
+                     (invoke (invoke wsdl 'get-element type-name) 'get-sample
+                             (xml/new-qname (invoke wsdl 'get-targetNamespace) (invoke operation 'get-name)))))))
 
           "</soapenv:Body>\n"
           "</soapenv:Envelope>"))
 
 
-(defun wsdl/create-request (wsdl-file)
+(defun wsdl/create-request (wsdl-location)
   "Build soap request to one of wsdl's operations in separate buffer"
-  (interactive "fwsdl: ")
+  (interactive "swsdl: ")
   ;;TODO: make these bindings buffer local, and remember them
-  (let* ((wsdl (wsdl/create-wsdl wsdl-file))
+  (let* ((wsdl (wsdl/create-wsdl wsdl-location))
          (port (util/select (invoke wsdl 'get-ports)
                             (lambda (port) 
                               (let ((qname (invoke port 'get-name)))
