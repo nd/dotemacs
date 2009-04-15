@@ -24,12 +24,42 @@
 
 (defconst build-in-types
   (list 
-   (xsd/create-build-in-type (xml/new-qname "http://www.w3.org/2001/XMLSchema" "string") "string")
-   (xsd/create-build-in-type (xml/new-qname "http://www.w3.org/2001/XMLSchema" "decimal") "1.0")
-   (xsd/create-build-in-type (xml/new-qname "http://www.w3.org/2001/XMLSchema" "date") "1999-05-31")
-   (xsd/create-build-in-type (xml/new-qname "http://www.w3.org/2001/XMLSchema" "NMTOKEN") "US")
-   (xsd/create-build-in-type (xml/new-qname "http://www.w3.org/2001/XMLSchema" "int") "1")
-   (xsd/create-build-in-type (xml/new-qname "http://www.w3.org/2001/XMLSchema" "dateTime") "1999-05-31T13:20:00.000-05:00")))
+   (xsd/create-build-in-type (xml/new-qname "http://www.w3.org/2001/XMLSchema" "string")
+                             "string")
+   (xsd/create-build-in-type (xml/new-qname "http://www.w3.org/2001/XMLSchema" "decimal") 
+                             "1.0")
+   (xsd/create-build-in-type (xml/new-qname "http://www.w3.org/2001/XMLSchema" "date") 
+                             "1999-05-31")
+   (xsd/create-build-in-type (xml/new-qname "http://www.w3.org/2001/XMLSchema" "NMTOKEN")
+                             "US")
+   (xsd/create-build-in-type (xml/new-qname "http://www.w3.org/2001/XMLSchema" "int")
+                             "1")
+   (xsd/create-build-in-type (xml/new-qname "http://www.w3.org/2001/XMLSchema" "dateTime")
+                             "1999-05-31T13:20:00.000-05:00")))
+
+(defun xsd/get-standart-schema ()
+  (let* ((xsd (create-object))
+         (targetNamespace "http://www.w3.org/2001/XMLSchema"))
+
+    (set-prop xsd 'targetNamespace targetNamespace)
+    (set-prop xsd 'simpleTypes build-in-types)
+
+    (defmethod xsd 'get-element
+      (lambda (element-name)
+        (car (filter (this. 'elements)
+                     (lambda (element) 
+                       (invoke (invoke element 'get-name) 'equal element-name))))))
+
+    (defmethod xsd 'get-type
+      (lambda (type-name)
+        (car (filter (append (this. 'simpleTypes) (this. 'complexTypes) build-in-types)
+                     (lambda (type) 
+                       (invoke (invoke type 'get-name) 'equal type-name))))))
+
+    (defmethod xsd 'get-targetNamespace
+      (lambda () (this. 'targetNamespace)))
+
+    xsd))
 
 
 (defun xsd/create-xsd (location-or-node)

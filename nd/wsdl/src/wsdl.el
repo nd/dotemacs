@@ -20,10 +20,11 @@
                 (xml/get-elements-by-name xml '(:http://schemas.xmlsoap.org/wsdl/ . "import"))))
 
        (xsds
-        (mapcar (lambda (schema-node) (xsd/create-xsd schema-node))
-                (xml/get-elements-by-name 
-                 (car (xml/get-elements-by-name xml '(:http://schemas.xmlsoap.org/wsdl/ . "types")))
-                 '(:http://www.w3.org/2001/XMLSchema . "schema"))))
+        (cons (xsd/get-standart-schema)
+              (mapcar (lambda (schema-node) (xsd/create-xsd schema-node))
+                      (xml/get-elements-by-name 
+                       (car (xml/get-elements-by-name xml '(:http://schemas.xmlsoap.org/wsdl/ . "types")))
+                       '(:http://www.w3.org/2001/XMLSchema . "schema")))))
 
        (messages 
         (append (mapcar (lambda (node) (wsdl/create-message targetNamespace ns-aliases node))
