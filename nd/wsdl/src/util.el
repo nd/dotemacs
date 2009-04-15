@@ -173,11 +173,31 @@
 (defun xml/delete-http-header ()
   "Delete http header from current buffer"
   (goto-char (point-min))
-  (when (looking-at "^HTTP/1.* 200 OK$")
+  (when (looking-at "^HTTP/1.*$")
         (re-search-forward "^$" nil t 1)
         (setq headers (buffer-substring-no-properties (point-min) (point))))
   (next-line)
-  (delete-region (point) (point-min)))
+  (delete-region (point) (point-min))
+  headers)
+
+
+(defun send-soap-request ()
+  (interactive)
+  (let* ((request (buffer-substring-no-properties (point-min) (point-max)))
+         (url-request-extra-headers
+          `(("Content-type" . "text/xml; charset=\"utf-8\"")
+            ("SOAPAction" . ,(format "%S" service-location))))
+         (url-request-method "POST")
+         (url-request-data (concat request))
+         (buf (url-retrieve-synchronously service-location)))
+    (set-buffer buf)
+    (rename-buffer (generate-new-buffer-name "*soap-response*"))
+    (xml/delete-http-header)
+    (set-window-buffer (selected-window) buf)
+    (nxml-mode)
+    (indent-region (point-min) (point-max))))
+
+
 
 (provide 'util)
 

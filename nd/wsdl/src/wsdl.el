@@ -113,12 +113,17 @@
   "Create wsdl port from it's node"
   (lexical-let* ((node port-node)
                  (name (xml/new-qname target-namespace (xml/get-attribute-value node "name")))
-                 (binding-name (xml/expand-qname (xml/get-attribute-value node "binding") target-namespace ns-aliases)))
+                 (binding-name (xml/expand-qname (xml/get-attribute-value node "binding") target-namespace ns-aliases))
+                 (location
+                  (xml/get-attribute-value 
+                   (car (xml/get-elements-by-name node '(:http://schemas.xmlsoap.org/wsdl/soap/ . "address")))
+                   "location")))
 
     ;; dispatch function
     (lambda (message)
       (cond ((eq message 'get-name) name)
             ((eq message 'get-binding-name) binding-name)
+            ((eq message 'get-location) location)
             (t (error (concat "Operation '" (symbol-name message) "' is not supported")))))))
 
 
@@ -303,6 +308,7 @@
                               (let ((qname (invoke port 'get-name)))
                                 (invoke qname 'to-string)))
                                "Port: "))
+         (location (invoke port 'get-location))
          (binding (invoke wsdl 'get-binding (invoke port 'get-binding-name)))
          (portType (invoke wsdl 'get-portType (invoke binding 'get-portType-name)))
          (operation (util/select (invoke portType 'get-operations)
@@ -316,7 +322,8 @@
                                        (invoke binding 'get-operation-binding-style operation)
                                        wsdl))
          (buf (set-buffer (get-buffer-create (generate-new-buffer-name "*soap-request*")))))
-    
+    (setq service-location location)
+    (make-local-variable 'service-location)
     (set-window-buffer (selected-window) buf)
     (insert request)
     (nxml-mode)
