@@ -165,6 +165,7 @@
     (xml/delete-http-header)
     (set-visited-file-name tmp-filename t)
     (save-buffer)
+    (kill-buffer buf)
     (let ((result (nxml-parse-file tmp-filename)))
       (delete-file tmp-filename)
       result)))
