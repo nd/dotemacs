@@ -323,5 +323,16 @@
     (indent-region (point-min) (point-max))
     buf))
 
+
+(defun wsdl/view-wsdl-at-location (location)
+  (interactive "swsdl: ")
+  (let ((buf (url-retrieve-synchronously location)))
+    (set-buffer buf)
+    (rename-buffer location)
+    (xml/delete-http-header)
+    (set-window-buffer (selected-window) buf)
+    (nxml-mode)))
+
+
 (provide 'wsdl)
 
