@@ -34,6 +34,8 @@
                              "US")
    (xsd/create-build-in-type (xml/new-qname "http://www.w3.org/2001/XMLSchema" "int")
                              "1")
+   (xsd/create-build-in-type (xml/new-qname "http://www.w3.org/2001/XMLSchema" "integer")
+                             "1")
    (xsd/create-build-in-type (xml/new-qname "http://www.w3.org/2001/XMLSchema" "dateTime")
                              "1999-05-31T13:20:00.000-05:00")
    (xsd/create-build-in-type (xml/new-qname "http://www.w3.org/2001/XMLSchema" "boolean")
