@@ -11,10 +11,14 @@
       (cond ((eq message 'set) (puthash (nth 0 args) (nth 1 args) state))
             ((eq message 'get) (gethash (nth 0 args) state))
             ((eq message 'defmethod) (puthash (nth 0 args) (nth 1 args) methods))
+
             ((not (null (gethash message methods)))
              (let ((method (gethash message methods))
                    (this state))
-               (apply method args)))
+               (condition-case err
+                   (apply method args)
+                 (message (concat "Error in method " message " : " err)))))
+            
             (t (error (concat "Method " (symbol-name message)  " is not supproted")))))))
 
 (defun set-prop (object prop value)
@@ -176,8 +180,9 @@
   (when (looking-at "^HTTP/1.*$")
         (re-search-forward "^$" nil t 1)
         (setq headers (buffer-substring-no-properties (point-min) (point))))
-  (next-line)
   (delete-region (point) (point-min))
+  (if (looking-at "^$")
+      (kill-line))
   headers)
 
 
