@@ -4,23 +4,21 @@
 (require 'util)
 
 (defun xsd/create-build-in-type (name sample)
-  (lexical-let* ((name name)
-                 (sample sample))
+  "Create build-in xsd type"
+  (let ((type (create-object)))
+    (set-prop type 'name name)
+    (set-prop type 'sample sample)
 
-    ;; dispatch function
-    (lambda (message &rest args)
-      (cond ((eq message 'get-name) name)
+    (defmethod type 'get-name (lambda () (this. 'name)))
+    (defmethod type 'get-sample (lambda () (this. 'sample)))
+    (defmethod type 'get-element-sample 
+      (lambda (element-name)
+        (concat
+         "<" (invoke element-name 'get-localname) ">" 
+         (this. 'sample) 
+         "</" (invoke element-name 'get-localname) ">\n" )))
+    type))
 
-            ((eq message 'get-sample) sample)
-
-            ((eq message 'get-element-sample) 
-             (let ((element-name (car args)))
-               (concat
-                "<" (invoke element-name 'get-localname) ">" 
-                sample 
-                "</" (invoke element-name 'get-localname) ">\n" )))
-
-            (t (error (concat "Operation '" (symbol-name message) "' is not supported")))))))
 
 (defconst build-in-types
   (list 
@@ -46,22 +44,15 @@
          (targetNamespace "http://www.w3.org/2001/XMLSchema"))
 
     (set-prop xsd 'targetNamespace targetNamespace)
-    (set-prop xsd 'simpleTypes build-in-types)
 
-    (defmethod xsd 'get-element
-      (lambda (element-name)
-        (car (filter (this. 'elements)
-                     (lambda (element) 
-                       (invoke (invoke element 'get-name) 'equal element-name))))))
+    (defmethod xsd 'get-element (lambda (element-name) (list)))
 
     (defmethod xsd 'get-type
       (lambda (type-name)
-        (car (filter (append (this. 'simpleTypes) (this. 'complexTypes) build-in-types)
-                     (lambda (type) 
-                       (invoke (invoke type 'get-name) 'equal type-name))))))
+        (car (filter build-in-types
+                     (lambda (type) (invoke (invoke type 'get-name) 'equal type-name))))))
 
-    (defmethod xsd 'get-targetNamespace
-      (lambda () (this. 'targetNamespace)))
+    (defmethod xsd 'get-targetNamespace (lambda () (this. 'targetNamespace)))
 
     xsd))
 
