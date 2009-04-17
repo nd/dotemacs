@@ -14,7 +14,8 @@
 
             ((not (null (gethash message methods)))
              (let ((method (gethash message methods))
-                   (this state))
+                   (this state)
+                   (this-methods methods))
                (condition-case err
                    (apply method args)
                  (message (concat "Error in method " message " : " err)))))
@@ -34,7 +35,10 @@
   (invoke object 'defmethod method-name lambda))
 
 (defun invoke (object method &rest args)
-  (apply object method args))
+  (if (eq object 'this)
+      (let ((m (gethash method this-methods)))
+        (apply m args))
+    (apply object method args)))
 
 (defun xml/new-qname (namespace localname)
   (lexical-let ((this-namespace namespace)
