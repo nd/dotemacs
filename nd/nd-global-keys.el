@@ -38,6 +38,8 @@
 ;; scroll up
 (global-set-key "\C-\M-z" '(lambda () (interactive) (scroll-down 1)))
 
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+
 ;; cua is usefull for rectagle editing
 (setq cua-enable-cua-keys nil)
 (setq cua-highlight-region-shift-only nil) ;no transient mark mode
