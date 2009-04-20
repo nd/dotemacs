@@ -1,6 +1,7 @@
 ;;util
 
 (require 'nxml-parse)
+(require 'nxml-util)
 
 (defun create-object ()
   (lexical-let ((state (make-hash-table))
@@ -81,7 +82,17 @@
                     (lambda (attr) 
                       (and (listp (nxml-node-name attr))
                            (eq (car (nxml-node-name attr)) 
-                               :http://www.w3.org/2000/xmlns/)))))))
+                               nxml-xmlns-namespace-uri)))))))
+
+(defun xml/get-ns-aliases2 (node)
+  "Get alist prefix->namespace symbol."
+  (let ((attributes (nxml-node-attributes node)))
+    (mapcar (lambda (a) (cons (cdar a) (nxml-make-namespace (cdr a))))
+            (filter attributes
+                    (lambda (attr) 
+                      (and (listp (nxml-node-name attr))
+                           (eq (car (nxml-node-name attr)) 
+                               nxml-xmlns-namespace-uri)))))))
 
 (defun wsdl/get-ns->location (node)
   (mapcar 
@@ -98,6 +109,12 @@
 
 (defun nxml-node-children (nxml-node)
   (filter (cddr nxml-node) (lambda (n) (listp n))))
+
+(defun nxml-get-namespace (qname)
+  (car qname))
+
+(defun nxml-get-localname (qname)
+  (cdr qname))
 
 (defun filter (list predicat)
   "TODO: make it better"
@@ -120,8 +137,23 @@
                   (t (error (concat "Unknown prefix " prefix " at " string-value))))))
       (xml/new-qname targetNamespace string-value))))
 
+(defun xml/expand-qname2 (string-value targetNamespace ns-aliases)
+  (let ((split-list (split-string string-value ":")))
+    (if (and (not (null split-list)) (eq (length split-list) 2)) ;;in form prefix:name
+        (let* ((prefix (car split-list))
+               (name (cadr split-list))
+               (resolved? (assoc prefix ns-aliases))
+               (namespace (and resolved? (cdr (assoc prefix ns-aliases)))))
+          (if resolved?
+              (cons namespace name)
+            (cond ((equal prefix "tns") (cons targetNamespace name))
+                  ((equal prefix "xsd") (cons :http://www.w3.org/2001/XMLSchema name))
+                  (t (error (concat "Unknown prefix " prefix " at " string-value))))))
+      (cons targetNamespace string-value))))
+
+
 (defun util/select (object-list to-string-function prompt)
-  "Select from item from object-list presented at minibuffer using ido"
+  "Select item from object-list presented at minibuffer using ido."
   (let* ((ido-decorations (list "\n"  ""
                                 "\n"  " | ..." 
                                 "\n[" "]" 
