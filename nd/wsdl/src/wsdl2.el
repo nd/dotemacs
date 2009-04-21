@@ -7,7 +7,7 @@
   tns           ;; targetNamespace of document
   aliases       ;; alist prefix->namespace
   used-sources  ;; alist namespace->location-or-node
-  location)
+  location)     ;; source location
  
 
 
@@ -34,16 +34,16 @@
 
     ;; choose port:
     (setq port (util/select
-                (wsdl2/get-ports (source-xml current-source))
+                (wsdl2/get-ports)
                 (lambda (port-node) (xml/get-attribute-value port-node "name"))
                 "Port: "))
     (setq port-location (wsdl2/get-port-location port))
 
-    (let ((binding-name (wsdl2/get-port-binding port (source-tns current-source))))
+    (let ((binding-name (wsdl2/get-port-binding port)))
       (setq current-source (wsdl2/resolve-ns current-source (nxml-get-namespace binding-name)))
       (setq binding (wsdl2/get-binding binding-name)))
 
-    (let ((portType-name (wsdl2/get-binding-portType binding (source-tns current-source))))
+    (let ((portType-name (wsdl2/get-binding-portType binding)))
       (setq current-source (wsdl2/resolve-ns current-source (nxml-get-namespace portType-name)))
       (setq portType (wsdl2/get-portType portType-name)))
     
@@ -53,7 +53,7 @@
                      "Operation: "))
 
     (let* ((input (wsdl2/get-input operation))
-           (message-name (wsdl2/get-input-message input (source-tns current-source))))
+           (message-name (wsdl2/get-input-message input)))
       (setq current-source (wsdl2/resolve-ns current-source (nxml-get-namespace message-name)))
       (setq message (wsdl2/get-message message-name)))
 
@@ -61,14 +61,14 @@
     (concat "soap request to " (xml/get-attribute-value portType "name"))))
 
 
-(defun wsdl2/get-ports (wsdl)
+(defun wsdl2/get-ports ()
   "Get list of port nodes from wsdl. Wsdl is a result of nxml-parse-file."
   (mapcan 
    (lambda (service-node)
      (xml/get-elements-by-name 
       service-node
       '(:http://schemas.xmlsoap.org/wsdl/ . "port")))
-   (xml/get-elements-by-name wsdl '(:http://schemas.xmlsoap.org/wsdl/ . "service"))))
+   (xml/get-elements-by-name (source-xml current-source) '(:http://schemas.xmlsoap.org/wsdl/ . "service"))))
 
 
 (defun wsdl2/get-port-location (port)
@@ -80,20 +80,20 @@
       (xml/get-attribute-value soap-address "location"))))
 
 
-(defun wsdl2/get-port-binding (port tns)
+(defun wsdl2/get-port-binding (port)
   "Get qualified name of port's binding from port's node. 
 ns-aliases is map from prefix to namespace.
 tns is targetNamespace"
   (let ((string-value (xml/get-attribute-value port "binding"))
-        (ns-aliases (source-aliases (gethash tns tns->source))))
-    (xml/expand-qname2 string-value tns ns-aliases)))
+        (ns-aliases (source-aliases (gethash (source-tns current-source) tns->source))))
+    (xml/expand-qname2 string-value (source-tns current-source) ns-aliases)))
 
 
-(defun wsdl2/get-binding-portType (binding tns)
+(defun wsdl2/get-binding-portType (binding)
   "Get binding's portType qname"
   (let ((string-value (xml/get-attribute-value binding "type"))
-        (ns-aliases (source-aliases (gethash tns tns->source))))
-    (xml/expand-qname2 string-value tns ns-aliases)))
+        (ns-aliases (source-aliases (gethash (source-tns current-source) tns->source))))
+    (xml/expand-qname2 string-value (source-tns current-source) ns-aliases)))
 
 
 (defun wsdl2/get-used-sources (wsdl base-location)
@@ -178,10 +178,10 @@ SOURCE is xml source that use this namespace."
         (error "operation has no input")
       (car inputs))))
 
-(defun wsdl2/get-input-message (input tns)
+(defun wsdl2/get-input-message (input)
   (let ((string-value (xml/get-attribute-value input "message"))
-        (ns-aliases (source-aliases (gethash tns tns->source))))
-    (xml/expand-qname2 string-value tns ns-aliases)))
+        (ns-aliases (source-aliases (gethash (source-tns current-source) tns->source))))
+    (xml/expand-qname2 string-value (source-tns current-source) ns-aliases)))
 
 (defun wsdl2/get-messages (wsdl)
   "Get list of message nodes from wsdl. Wsdl is a result of nxml-parse-file."
