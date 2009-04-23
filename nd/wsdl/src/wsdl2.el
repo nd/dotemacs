@@ -26,7 +26,6 @@
     (make-local-variable 'operation)      ;; operation we request
     (make-local-variable 'message)        ;; input message of operation we request
 
-
     (setq wsdl-location wsdl-location)
     (setq loaded-sources (make-hash-table))
     (setq tns->source (make-hash-table))
@@ -58,7 +57,36 @@
       (setq message (wsdl2/get-message message-name)))
 
     ;; build request
-    (concat "soap request to " (xml/get-attribute-value portType "name"))))
+    (wsdl2/build-soap-request)))
+
+
+(defun wsdl2/build-soap-request ()
+  (wsdl2/validate-binding)
+
+  (concat "soap request to " (xml/get-attribute-value portType "name")))
+
+
+(defun wsdl2/validate-binding ()
+  (let ((style (wsdl2/get-binding-style binding (xml/get-attribute-value operation "name")))
+        (parts (wsdl2/get-parts message)))
+    (cond ((and (eq style 'document) 
+                (not (equal (length parts) 1))) 
+           (error "in document binding message should contain only one part"))
+
+          ((and (eq style 'document)
+                (wsdl2/use-type? (car parts)))
+           (error "in document binding message part should use element, not type"))
+
+          ((and (eq binding 'rpc)
+                (not (wsdl2/use-type? (car parts)))
+                (not (eql (length parts) 1)))
+           (error "in rpc binding if message part use element should be only one part")))))
+
+
+(defun wsdl2/get-binding-style (binding operation-name)
+  (let* ((soap-binding (car (xml/get-elements-by-name binding '(:http://schemas.xmlsoap.org/wsdl/soap/ . "binding"))))
+         (default-style (xml/get-attribute-value soap-binding "style")))
+    (and default-style (intern default-style))))
 
 
 (defun wsdl2/get-ports (wsdl)
@@ -194,5 +222,13 @@ SOURCE is xml source that use this namespace."
           (wsdl2/get-messages wsdl)
           :test (lambda (name message-node)
                   (equal (xml/get-attribute-value message-node "name") name)))))
+
+(defun wsdl2/get-parts (message)
+  "Get parts of message"
+  (xml/get-elements-by-name message '(:http://schemas.xmlsoap.org/wsdl/ . "part")))
+
+(defun wsdl2/use-type? (part)
+  "Check if part uses type"
+  (not (null (xml/get-attribute-value part "type"))))
 
 (provide 'wsdl2)
