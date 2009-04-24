@@ -75,6 +75,9 @@
 
           (t nil))))
 
+(defun qname-to-string (qname)
+  (concat "{" (symbol-name (car qname)) "}:" (cdr qname)))
+
 (defun xml/get-ns-aliases (node)
   (let ((attributes (nxml-node-attributes node)))
     (mapcar (lambda (a) (cons (cdar a) (cdr a)))
