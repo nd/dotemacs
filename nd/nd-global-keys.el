@@ -20,6 +20,14 @@
 
 ;; revert buffer 
 (global-set-key (kbd "C-c r") 'revert-buffer)
+;; kill buffer
+(defun kill-buffer-or-client ()
+  "If buffer has clients - kill 'em, otherwise kill-buffer"
+  (interactive)
+  (if server-buffer-clients
+      (server-edit)
+    (ido-kill-buffer)))
+(global-set-key (kbd "C-x k") 'kill-buffer-or-client)
 
 ;; Completion that uses many different methods to find options.
 (global-set-key (kbd "M-/") 'hippie-expand)
