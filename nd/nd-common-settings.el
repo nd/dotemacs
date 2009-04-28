@@ -53,4 +53,12 @@
 ;; save minibuffer history between sessions
 (savehist-mode 1)
 
+
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'reverse)
+(setq uniquify-separator "/")
+(setq uniquify-after-kill-buffer-p t) ; rename after killing uniquified
+(setq uniquify-ignore-buffers-re "^\\*") ; don't muck with special buffers
+
+
 (provide 'nd-common-settings)
