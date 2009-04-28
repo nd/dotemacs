@@ -57,18 +57,53 @@
       (setq message (wsdl2/get-message message-name)))
 
     ;; build request
-    (wsdl2/build-soap-request)))
+    (let ((request (wsdl2/build-soap-request))
+          (port-location port-location)
+          (buf (set-buffer (get-buffer-create (generate-new-buffer-name "*soap-request*")))))
+      (make-local-variable 'location)
+      (setq location port-location)
+      (set-window-buffer (selected-window) buf)
+      (insert request)
+      (nxml-mode)
+      (indent-region (point-min) (point-max))
+      'done)))
 
 
 (defun wsdl2/build-soap-request ()
-  (wsdl2/validate-binding)
+  (let ((style (wsdl2/get-binding-style binding (xml/get-attribute-value operation "name"))))
+    (wsdl2/validate-binding style)
 
-  (concat "soap request to " (xml/get-attribute-value portType "name")))
+    (concat "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" 
+          "<soapenv:Body>\n"
+
+          (cond ((eq style 'document)
+                 (let* ((part (car (wsdl2/get-parts message)))
+                        (element-name (xml/expand-qname-local (xml/get-attribute-value part "element"))))
+                   "document style\n"))
+                ((eq style 'rpc)
+                 (if (xml/get-attribute-value (car (wsdl2/get-parts message)) "type")
+                     (let ((operation-name (xml/get-attribute-value operation "name"))
+                           (parts (wsdl2/get-parts message)))
+                       (concat 
+                        "<"operation-name">\n"
+                        (apply 'concat (mapcar 'wsdl2/sample-for-part-with-type parts))
+                        "</"operation-name">\n"))
+                   (let (())
+                     "rpc style for element\n"))))
+
+          "</soapenv:Body>\n"
+          "</soapenv:Envelope>")))
 
 
-(defun wsdl2/validate-binding ()
-  (let ((style (wsdl2/get-binding-style binding (xml/get-attribute-value operation "name")))
-        (parts (wsdl2/get-parts message)))
+(defun wsdl2/sample-for-part-with-type (part)
+  "Build sample for part that use type"
+  (let ((part-name (xml/get-attribute-value part "name"))
+        (type-name (xml/expand-qname-local (xml/get-attribute-value part "type"))))
+    (concat "sample for type '" (qname-to-string type-name) "'\n")))
+
+
+(defun wsdl2/validate-binding (style)
+  (let ((parts (wsdl2/get-parts message)))
     (cond ((and (eq style 'document) 
                 (not (equal (length parts) 1))) 
            (error "in document binding message should contain only one part"))
@@ -106,6 +141,13 @@
     (if (null soap-address)
         (error "port doesn't contain soap:address")
       (xml/get-attribute-value soap-address "location"))))
+
+
+(defun xml/expand-qname-local (string-value)
+  "Expand string-value to qname using local values of ns-aliases and tns"
+  (let* ((tns (source-tns current-source))
+         (ns-aliases (source-aliases current-source)))
+    (xml/expand-qname2 string-value tns ns-aliases)))
 
 
 (defun wsdl2/get-port-binding (port)
