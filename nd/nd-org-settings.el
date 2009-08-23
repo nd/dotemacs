@@ -61,13 +61,15 @@ canceled or dismissed) to the position after last active task."
 
 (defun get-history-data ()
   "Returns list of task velocities"
+  (interactive)
   (org-clock-sum)
   (org-map-entries
    '(lambda ()
-      (let ((actual (org-entry-get (point) "CLOCK")) ;;CLOCKSUM should work
+      (let ((actual (get-text-property (point) :org-clock-minutes)) 
+            ;;(org-entry-get (point) "CLOCKSUM") should work, but don't
             (estimate (org-entry-get (point) "ESTIMATE")))
-        (list 'actual actual
-              'estimate estimate)))
+        (/ (float (hm->minutes estimate))
+               (float actual))))
    "/+DONE" 'file))
 
 
@@ -123,6 +125,35 @@ canceled or dismissed) to the position after last active task."
                (float (hm->minutes actual)))))
         data)
 
+(defun predict ()
+  (interactive)
+  (let* ((velocities (get-history-data))
+         (predicted-sum-times 
+          (loop repeat 100
+                collect 
+                (apply '+ 
+                       (mapcar (lambda (estimate) 
+                                 (/ (float estimate)
+                                    (random-element velocities)))
+                               (get-new-estimates)))))
+         (max-minutes (apply 'max predicted-sum-times)))
+    (with-temp-buffer
+      (insert "set terminal wxt persist\n")
+      (insert "set grid back\n") 
+      (insert "plot '-' using 1:2 title 'probability' smooth bezier with lines y1=90\n")
+      (mapcar (lambda (time)
+                (let ((probability (get-probability-for-time predicted-sum-times time)))
+                  (insert (format "%3d %.2f\n" 
+                                  (/ time (* 8 60))
+                                  probability))
+                  probability))
+              (loop for x from 0 to (+ max-minutes (* 2 8 60)) by (* 8 60) collect x))
+      (insert "e")
+      (gnuplot-mode)
+      (gnuplot-send-buffer-to-gnuplot)
+      )))
+
+
 (setq velocities
       '(0.5 0.6666666666666666 0.06976744186046512 0.4 0.5294117647058824 0.8571428571428571))
 
@@ -130,9 +161,11 @@ canceled or dismissed) to the position after last active task."
 
 (setq predicted-summary-times
       (loop repeat 100
-            collect (apply '+ (mapcar (lambda (estimate) 
-                                        (/ (float estimate) (random-element velocities)))
-                                      new-estimates))))
+            collect 
+            (apply '+ (mapcar (lambda (estimate) 
+                                (/ (float estimate)
+                                   (random-element velocities)))
+                              new-estimates))))
 
 ;;функция распределения p(x), x < t
 (let ((max-minutes (apply 'max predicted-summary-times))
@@ -161,11 +194,9 @@ canceled or dismissed) to the position after last active task."
 ;     'file)
     ))
 
-(defun get-probability-for-time (time)
-  (count time predicted-summary-times :test (lambda (time x) (< x time))))
-(defun get-probability-for-time2 (time1 time2)
-  (count nil predicted-summary-times :test 
-         (lambda (something x) (and (>= x time1) (< x time2)))))
+(defun get-probability-for-time (times time)
+  (count time times :test (lambda (time x) (< x time))))
+
 
 (provide 'nd-org-settings)
 
