@@ -1,4 +1,5 @@
 (add-to-list 'load-path "~/.emacs.d/vendor/org/lisp")
+(add-to-list 'load-path "~/.emacs.d/vendor/gnuplot")
 (add-to-list 'load-path "~/.emacs.d/vendor/org/contrib/lisp")
 
 (require 'org-install)
@@ -58,5 +59,115 @@ canceled or dismissed) to the position after last active task."
         (kill-line)))))
 
 
+(defun get-history-data ()
+  "Returns list of task velocities"
+  (org-clock-sum)
+  (org-map-entries
+   '(lambda ()
+      (let ((actual (org-entry-get (point) "CLOCK")) ;;CLOCKSUM should work
+            (estimate (org-entry-get (point) "ESTIMATE")))
+        (list 'actual actual
+              'estimate estimate)))
+   "/+DONE" 'file))
+
+
+(defun get-new-estimates ()
+  "Returns list of new tasks estimate times in minutes"
+  (interactive)
+  (org-map-entries
+   '(lambda ()
+      (let ((estimate (org-entry-get (point) "ESTIMATE")))
+        (hm->minutes estimate)))
+   "+ESTIMATE={.+}/+TODO" 'file))
+
+
+(defun hm->minutes (hm)
+  "From string in hh:mm format to minutes"
+  (if (string-match "\\([0-9]+\\):\\([0-9]\\{2\\}\\)" hm)
+      (let ((hours   (string-to-number (match-string 1 hm)))
+            (minutes (string-to-number (match-string 2 hm))))
+        (+ (* hours 60) minutes))
+      (error "Wrong time format -- " hm)))
+
+(defun minutes->hm (minutes)
+  "From minutes to hh:mm format"
+  (let* ((hours (truncate (/ minutes 60)))
+         (mins  (round (- minutes (* 60 hours)))))
+    (concat (number-to-string hours)
+            ":"
+            (and (< mins 10) "0")
+            (number-to-string mins))))
+
+
+(defun random-element (list)
+  "Get random element from list"
+  (let* ((list-size (length list))
+         (random-element-index (random list-size)))
+    (nth random-element-index list)))
+
+
+(setq data 
+      '(((actual "2:00") (estimate "1:00"))
+        ((actual "1:00") (estimate "0:40"))
+        ((actual "7:10") (estimate "0:30"))
+        ((actual "2:30") (estimate "1:00"))
+        ((actual "2:50") (estimate "1:30"))
+        ((actual "2:20") (estimate "2:00"))))
+
+
+;;velocities
+(mapcar (lambda (record) 
+          (let ((actual   (cadr (assoc 'actual record)))
+                (estimate (cadr (assoc 'estimate record))))
+            (/ (float (hm->minutes estimate))
+               (float (hm->minutes actual)))))
+        data)
+
+(setq velocities
+      '(0.5 0.6666666666666666 0.06976744186046512 0.4 0.5294117647058824 0.8571428571428571))
+
+(setq new-estimates '(60 120 180 60 120 180 60 120 180 60 120 180 60 120 180 60 120 180))
+
+(setq predicted-summary-times
+      (loop repeat 100
+            collect (apply '+ (mapcar (lambda (estimate) 
+                                        (/ (float estimate) (random-element velocities)))
+                                      new-estimates))))
+
+;;функция распределения p(x), x < t
+(let ((max-minutes (apply 'max predicted-summary-times))
+;      (tmp-file-name (make-temp-file "prediction-plot"))
+      )
+  (with-temp-buffer
+    (insert "set terminal wxt persist\n")
+    (insert "plot '-' u 1:2 with lines\n")
+    (mapcar (lambda (time)
+            (let ((probability (get-probability-for-time time)))
+              (insert (format "%3d %.2f\n" 
+                              (/ time (* 8 60))
+                              probability))
+              probability))
+          (loop for x from 0 to max-minutes by (* 8 60) collect x))
+;    (set-visited-file-name tmp-file-name t)
+;    (save-buffer)
+    (insert "e")
+    (gnuplot-mode)
+    (gnuplot-send-buffer-to-gnuplot)
+;    (call-process-shell-command (concat "gnuplot " tmp-file-name))
+;    (delete-file tmp-file-name)
+;    (gnuplot-send-string-to-gnuplot
+;     (concat "set terminal wxt persist,"
+;             "plot " tmp-file-name " using 1:2 with lines, "" using 1:2 with boxes")
+;     'file)
+    ))
+
+(defun get-probability-for-time (time)
+  (count time predicted-summary-times :test (lambda (time x) (< x time))))
+(defun get-probability-for-time2 (time1 time2)
+  (count nil predicted-summary-times :test 
+         (lambda (something x) (and (>= x time1) (< x time2)))))
+
 (provide 'nd-org-settings)
+
+
 
