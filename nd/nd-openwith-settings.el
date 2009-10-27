@@ -4,9 +4,10 @@
 (openwith-mode t)
 
 (setq openwith-associations
-      '(("\\.pdf\\'" "evince" (file)) 
+      '(("\\.\\(?:pdf\\|djvu\\)\\'" "evince" (file)) 
         ("\\.\\(?:mpe?g\\|avi\\|wmv\\)\\'" "mplayer" ("-idx" file))
         ("\\.\\(?:jp?g\\|png\\)\\'" "display" (file))
+        ("\\.chm\\'" "xchm" (file))
         ("\\.html?\\'" "firefox" (file))))
 
 
