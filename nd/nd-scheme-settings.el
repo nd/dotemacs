@@ -10,5 +10,8 @@
       (append '(("\\.scm$" . scheme-mode))
               auto-mode-alist))
 
+(define-key scheme-mode-map [(f5)] 'run-scheme)
+
+
 
 (provide 'nd-scheme-settings)
