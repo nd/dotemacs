@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<definitions name="Simple"
+             targetNamespace="http://example.com/stockquote.wsdl"
+             xmlns:tns="http://example.com/stockquote.wsdl"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <message name="GetLastTradePriceInput">
+        <part name="order"   type="xsd:int"/>
+        <part name="address" type="xsd:string"/>
+    </message>
+
+    <message name="GetLastTradePriceOutput">
+        <part name="body" type="xsd:int"/>
+    </message>
+
+    <portType name="StockQuotePortType">
+        <operation name="GetLastTradePrice">
+            <input message="tns:GetLastTradePriceInput"/>
+            <output message="tns:GetLastTradePriceOutput"/>
+        </operation>
+    </portType>
+
+    <binding name="StockQuoteSoapBinding" type="tns:StockQuotePortType">
+        <soap:binding style="rpc"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="GetLastTradePrice">
+            <soap:operation soapAction="http://example.com/GetLastTradePrice"/>
+            <input>
+                <soap:body use="literal" namespace="http://example.com/stockquote.xsd"/>
+            </input>
+            <output>
+                <soap:body use="literal" namespace="http://example.com/stockquote.xsd"/>
+            </output>
+        </operation>
+    </binding>
+
+    <service name="StockQuoteService">
+        <documentation>My first service</documentation>
+        <port name="StockQuotePort" binding="tns:StockQuoteSoapBinding">
+            <soap:address location="http://example.com/stockquote"/>
+        </port>
+    </service>
+</definitions>
