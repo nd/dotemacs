@@ -27,8 +27,10 @@
       (global-set-key "\C-ced" 'emms-playlist-mode-go)
 
       (setq emms-playlist-buffer-name "*Music*")
-      (emms-add-directory-tree "/muz")
-      (emms-add-directory-tree "/video")
+;      (emms-add-directory-tree "/muz")
+;      (emms-add-directory-tree "/video")
+      (emms-add-url "http://207.200.96.228:8078/listen.pls")
+      (setq emms-volume-amixer-control "PCM")
 
       (setq emms-cache-file "~/.emacs.d/tmp/emms.cache")))
 

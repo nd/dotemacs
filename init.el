@@ -1,3 +1,4 @@
+
 ;; entry point to my emacs customizations
 
 (add-to-list 'load-path "~/.emacs.d/nd")
@@ -24,7 +25,8 @@
 (require 'nd-startup-settings)
 ;(require 'nd-wsdl-settings)
 (require 'nd-clojure-settings)
-
+(require 'nd-haskell-settings)
+(require 'nd-erlang-settings)
 
 (when
     (load
