@@ -31,7 +31,7 @@
   (define-key ido-completion-map "\C-n"    'ido-next-match)
   (define-key ido-completion-map "\C-p"    'ido-prev-match)
   (define-key ido-completion-map " "       'ido-exit-minibuffer)
-  (define-key ido-completion-map "\t"       'ido-exit-minibuffer))
+  (define-key ido-completion-map "\t"      'ido-exit-minibuffer))
 
 (add-hook 'ido-setup-hook 'nd-ido-keys)
 
