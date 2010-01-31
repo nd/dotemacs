@@ -30,4 +30,8 @@
 	    (dolist (spec distel-shell-keys)
 	      (define-key erlang-shell-mode-map (car spec) (cadr spec)))))
 
+(setq erlang-electric-commands
+      '(erlang-electric-comma
+        erlang-electric-semicolon))
+
 (provide 'nd-erlang-settings)
