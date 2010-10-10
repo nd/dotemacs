@@ -1,5 +1,8 @@
-(add-to-list 'load-path "~/.emacs.d/haskell-mode")
-(load "~/.emacs.d/haskell-mode/haskell-site-file")
+;;;; haskell settings
+;; haskell mode site: http://projects.haskell.org/haskellmode-emacs/
+
+(add-to-list 'load-path "~/.emacs.d/vendor/haskell-mode")
+(load "~/.emacs.d/vendor/haskell-mode/haskell-site-file")
 
 (defun nd/haskell-mode-hook ()
   (turn-on-haskell-doc-mode)
