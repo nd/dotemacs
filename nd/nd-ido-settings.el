@@ -14,7 +14,6 @@
       '("^ " 
         "\\*Music\\*"
         "\\*Completions\\*"
-        "\\*magit-.*"
         "\\*Buffer List\\*"))
 
 ;; use ido to open recent files using C-x C-r
