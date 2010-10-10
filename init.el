@@ -16,6 +16,7 @@
 (require 'nd-server-settings)
 (require 'nd-startup-settings)
 
+;;settings that require something (maybe not required on every machine)
 (require 'nd-git-settings)
 ;(require 'nd-emms-settings)
 (require 'nd-scheme-settings)
