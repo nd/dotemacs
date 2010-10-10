@@ -27,10 +27,3 @@
 ;(require 'nd-clojure-settings)
 (require 'nd-haskell-settings)
 ;(require 'nd-erlang-settings)
-
-(when
-    (load
-     (expand-file-name "~/.emacs.d/elpa/package.el"))
-  (package-initialize))
-
-
