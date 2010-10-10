@@ -6,6 +6,9 @@
       ido-create-new-buffer 'always)
 (ido-mode t)
 
+;; don't do merge:
+(setq ido-auto-merge-inhibit-characters-regexp ".*")
+
 ;; ido ignore buffers
 (setq ido-ignore-buffers 
       '("^ " 
