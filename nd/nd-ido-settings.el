@@ -2,7 +2,7 @@
 
 (require 'ido)
 (setq ido-enable-flex-matching t
-      ido-use-filename-at-point t
+      ido-use-filename-at-point nil
       ido-create-new-buffer 'always)
 (ido-mode t)
 
