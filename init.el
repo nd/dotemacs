@@ -26,7 +26,7 @@
 ;(require 'nd-wsdl-settings)
 ;(require 'nd-clojure-settings)
 (require 'nd-haskell-settings)
-(require 'nd-erlang-settings)
+;(require 'nd-erlang-settings)
 
 (when
     (load
