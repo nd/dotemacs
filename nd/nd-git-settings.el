@@ -1,6 +1,10 @@
 ;;;; git settings
+;;
+;; if there is no magit on machine, run:
+;; git clone http://github.com/philjackson/magit.git magit
+;; cd magit
+;; make; sudo make install
 
-(add-to-list 'load-path "~/.emacs.d/elpa/magit-0.7")
 (require 'magit)
 
 (global-set-key (kbd "C-x g") 'magit-status)
