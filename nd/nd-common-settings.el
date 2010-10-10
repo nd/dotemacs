@@ -27,12 +27,8 @@
 ;; tramp history file
 (setq tramp-persistency-file-name "/home/nd/tmp/tramp")
 
-;; backup settings
-(setq make-backup-files t)
-(setq backup-directory-alist '((".*" . "~/backup"))
-      delete-old-versions t
-      kept-new-versions 4
-      kept-old-versions 2)
+;; no backup files - use git instead
+(setq make-backup-files nil)
 
 ;; bury *scratch* buffer instead of kill it
 (defadvice kill-buffer (around kill-buffer-around-advice activate)
