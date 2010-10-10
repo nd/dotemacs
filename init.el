@@ -21,7 +21,7 @@
 ;(require 'nd-emms-settings)
 (require 'nd-scheme-settings)
 (require 'nd-openwith-settings)
-(require 'nd-auto-complete-settings)
+;(require 'nd-auto-complete-settings)
 ;(require 'nd-dbus-settings)
 ;(require 'nd-wsdl-settings)
 (require 'nd-clojure-settings)
