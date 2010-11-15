@@ -2,12 +2,11 @@
 
 (if (equal system-type 'gnu/linux)
     (progn
-      (add-to-list 'load-path "~/emacs/site-lisp/emms/lisp/")
+      (add-to-list 'load-path "~/.emacs.d/vendor/emms/lisp/")
 
       (require 'emms-setup)
       (emms-standard)
       (emms-default-players)
-      (require 'emms-lastfm)
 
       (define-emms-simple-player mplayer '(file url)
         (concat "\\`\\(http\\|mms\\)://\\|"
