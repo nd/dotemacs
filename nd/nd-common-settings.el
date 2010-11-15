@@ -15,6 +15,12 @@
 ;; y and n instead of yes and no
 (fset 'yes-or-no-p 'y-or-n-p)
 
+;; do not ask additional question if I want to kill a buffer with a
+;; live process attached to it, I always aswer 'yes' anyway
+(setq kill-buffer-query-functions
+  (remq 'process-kill-buffer-query-function
+         kill-buffer-query-functions))
+
 ;; avoid mouse then typing
 (mouse-avoidance-mode 'banish)
 
