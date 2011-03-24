@@ -54,5 +54,17 @@
 (setq cua-toggle-set-mark nil) ;original set-mark behavior, i.e. no transient-mark-mode
 (cua-mode)
 
+(defun nd-open-dir-other-buffer ()
+  (interactive)
+  (let* ((dir (nd-get-dir-to-open))
+         (w (split-window-horizontally)))
+    (select-window w)
+    (dired dir)))
+
+(defun nd-get-dir-to-open ()
+  (or dired-directory
+      (replace-regexp-in-string "[^/]*$" "" buffer-file-name)))
+
+(global-set-key "\C-c\C-v" 'nd-open-dir-other-buffer)
 
 (provide 'nd-global-keys)
