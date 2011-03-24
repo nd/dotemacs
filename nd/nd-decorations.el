@@ -14,7 +14,7 @@
 ;; show marked text
 (setq transient-mark-mode 1)
 
-;; show parents
+;; show parens
 (show-paren-mode 1)
 
 ;; not blinking cursor 
