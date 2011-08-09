@@ -18,6 +18,8 @@
 (global-set-key "\C-\M-r" 'isearch-backward)
 (global-set-key "\M-%"    'query-replace-regexp)
 
+(global-set-key "\C-c\C-t" 'toggle-truncate-lines)
+
 ;; revert buffer 
 (global-set-key (kbd "C-c r") 'revert-buffer)
 ;; kill buffer
@@ -66,5 +68,10 @@
       (replace-regexp-in-string "[^/]*$" "" buffer-file-name)))
 
 (global-set-key "\C-c\C-v" 'nd-open-dir-other-buffer)
+
+(global-set-key (kbd "M-<up>") '(lambda () (interactive) (enlarge-window 1)))
+(global-set-key (kbd "M-<down>") '(lambda () (interactive) (enlarge-window -1)))
+(global-set-key (kbd "M-<right>") '(lambda () (interactive) (enlarge-window-horizontally 1)))
+(global-set-key (kbd "M-<left>") '(lambda () (interactive) (enlarge-window-horizontally -1)))
 
 (provide 'nd-global-keys)
