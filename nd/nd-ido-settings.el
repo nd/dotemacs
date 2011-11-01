@@ -3,8 +3,10 @@
 (require 'ido)
 (setq ido-enable-flex-matching t
       ido-use-filename-at-point nil
-      ido-create-new-buffer 'always)
+      ido-create-new-buffer 'always
+      ido-max-directory-size 300000)
 (ido-mode t)
+
 
 ;; don't do merge:
 (setq ido-auto-merge-inhibit-characters-regexp ".*")
