@@ -28,4 +28,4 @@
 (require 'nd-haskell-settings)
 ;(require 'nd-erlang-settings)
 (require 'nd-browse-settings)
-
+(require 'nd-jabber-settings)
