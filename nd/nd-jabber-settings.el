@@ -40,6 +40,15 @@
 
 (add-hook 'jabber-alert-message-hooks 'libnotify-jabber-notify)
 
+(add-hook 'jabber-chat-mode-hook 'auto-fill-mode)
+
+(defadvice jabber-chat-send (before removing-newlines
+                                    (jc body))
+  "Remove unnecessary new lines inserted by auto-fill-mode."
+  (ad-set-arg 1 (replace-regexp-in-string "\\([[:word:]]\\)\n\\([[:word:]]\\)" "\\1 \\2" body)))
+
+(ad-activate 'jabber-chat-send)
+
 (setq jabber-vcard-avatars-retrieve nil)
 
 (provide 'nd-jabber-settings)
