@@ -57,5 +57,15 @@
 (custom-set-faces
  '(comint-highlight-prompt ((t (:foreground "dark blue" :weight ultra-bold)))))
 
+(defconst nd-system-heights 
+  '(("nds-MacBook-Air" . 60)))
+(defconst nd-system-widths
+  '(("nds-MacBook-Air" . 202)))
+(let* ((system (car (split-string (system-name) "\\.")))
+       (height (assoc system nd-system-heights))
+       (width (assoc system nd-system-widths)))
+  (when height
+    (set-frame-height (selected-frame) (cdr height))
+    (set-frame-width (selected-frame) (cdr width))))
 
 (provide 'nd-decorations)
