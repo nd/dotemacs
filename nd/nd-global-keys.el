@@ -74,4 +74,7 @@
 (global-set-key (kbd "M-<right>") '(lambda () (interactive) (enlarge-window-horizontally 1)))
 (global-set-key (kbd "M-<left>") '(lambda () (interactive) (enlarge-window-horizontally -1)))
 
+;;bind cmd to meta on mac:
+(setq ns-command-modifier 'meta)
+
 (provide 'nd-global-keys)
