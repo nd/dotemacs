@@ -64,5 +64,6 @@
 (setq uniquify-after-kill-buffer-p t) ; rename after killing uniquified
 (setq uniquify-ignore-buffers-re "^\\*") ; don't muck with special buffers
 
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 (provide 'nd-common-settings)
