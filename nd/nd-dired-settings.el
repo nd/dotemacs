@@ -24,5 +24,12 @@
 
 (add-hook 'dired-mode-hook 'nd-dired-keys)
 
-(provide 'nd-dired-settings)
+;; Make dired less verbose
+(require 'package)
+(when (not (package-installed-p 'dired-details))
+  (package-install 'dired-details))
+(require 'dired-details)
+(setq-default dired-details-hidden-string "--- ")
+(dired-details-install)
 
+(provide 'nd-dired-settings)
