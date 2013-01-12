@@ -8,12 +8,25 @@
 (ido-mode t)
 
 
+;; Use ido everywhere
+(when (not (package-installed-p 'ido-ubiquitous))
+  (package-install 'ido-ubiquitous))
+(require 'ido-ubiquitous)
+(ido-ubiquitous-mode 1)
+
+;; Fix ido-ubiquitous for newer packages
+(defmacro ido-ubiquitous-use-new-completing-read (cmd package)
+  `(eval-after-load ,package
+     '(defadvice ,cmd (around ido-ubiquitous-new activate)
+        (let ((ido-ubiquitous-enable-compatibility nil))
+          ad-do-it))))
+
 ;; don't do merge:
 (setq ido-auto-merge-inhibit-characters-regexp ".*")
 
 ;; ido ignore buffers
-(setq ido-ignore-buffers 
-      '("^ " 
+(setq ido-ignore-buffers
+      '("^ "
         "\\*Music\\*"
         "\\*Completions\\*"
         "\\*Buffer List\\*"))
