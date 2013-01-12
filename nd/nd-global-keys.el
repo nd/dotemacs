@@ -11,7 +11,7 @@
 (define-key isearch-mode-map "\C-h" 'isearch-del-char)
 (global-set-key "\C-\M-h"  'backward-kill-word)
 
-;; bindings for search 
+;; bindings for search
 (global-set-key "\C-s"    'isearch-forward-regexp)
 (global-set-key "\C-r"    'isearch-backward-regexp)
 (global-set-key "\C-\M-s" 'isearch-forward)
@@ -20,7 +20,7 @@
 
 (global-set-key "\C-c\C-t" 'toggle-truncate-lines)
 
-;; revert buffer 
+;; revert buffer
 (global-set-key (kbd "C-c r") 'revert-buffer)
 ;; kill buffer
 (defun kill-buffer-or-client ()
@@ -36,7 +36,7 @@
 
 (global-set-key "\C-x\C-h" 'help-command)
 ;; Help should search more than just commands (from emacs-starter-kit)
-(global-set-key "\C-x\C-ha" 'apropos) 
+(global-set-key "\C-x\C-ha" 'apropos)
 
 ;; I don't use set-goal-column
 (global-unset-key "\C-x\C-n")
@@ -76,5 +76,16 @@
 
 ;;bind cmd to meta on mac:
 (setq ns-command-modifier 'meta)
+
+(global-set-key [remap goto-line] 'goto-line-with-feedback)
+
+(defun goto-line-with-feedback ()
+  "Show line numbers temporarily, while prompting for the line number input"
+  (interactive)
+  (unwind-protect
+      (progn
+        (linum-mode 1)
+        (goto-line (read-number "Goto line: ")))
+    (linum-mode -1)))
 
 (provide 'nd-global-keys)
