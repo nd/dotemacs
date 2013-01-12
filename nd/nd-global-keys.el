@@ -9,6 +9,10 @@
 
 ;; C-h delete backward char while search
 (define-key isearch-mode-map "\C-h" 'isearch-del-char)
+(define-key isearch-mode-map (kbd "C-o") 'isearch-occur)
+(define-key occur-mode-map "j" 'occur-next)
+(define-key occur-mode-map "k" 'occur-prev)
+
 (global-set-key "\C-\M-h"  'backward-kill-word)
 
 ;; bindings for search
