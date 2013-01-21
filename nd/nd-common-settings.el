@@ -66,4 +66,6 @@
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
+(winner-mode 1)
+
 (provide 'nd-common-settings)
