@@ -20,7 +20,12 @@
   (define-key dired-mode-map (kbd "C-c C-o") 'dired-gnome-open-file)
   (define-key dired-mode-map (kbd "C-c C-r") 'wdired-change-to-wdired-mode)
   (define-key dired-mode-map (kbd "j") 'dired-next-line)
-  (define-key dired-mode-map (kbd "k") 'dired-previous-line))
+  (define-key dired-mode-map (kbd "k") 'dired-previous-line)
+  (define-key dired-mode-map (kbd "W") 'dired-copy-full-filename-as-kill))
+
+(defun dired-copy-full-filename-as-kill ()
+  (interactive)
+  (dired-copy-filename-as-kill 0))
 
 (add-hook 'dired-mode-hook 'nd-dired-keys)
 
