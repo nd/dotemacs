@@ -3,7 +3,7 @@
 (add-to-list 'load-path "~/emacs/site-lisp")
 (add-to-list 'load-path "~/.emacs.d/vendor")
 
-;; moving cursor down at bottom scrolls 
+;; moving cursor down at bottom scrolls
 ;; only a single line, not half page
 (setq-default scroll-step 1)
 (setq-default scroll-conservatively 0)
@@ -43,7 +43,7 @@
         (bury-buffer)
       ad-do-it)))
 
-;; create directories automaticaly 
+;; create directories automaticaly
 ;; if we open file in directory that doesn't exist yet
 (add-hook 'before-save-hook
           '(lambda ()
@@ -67,5 +67,16 @@
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 (winner-mode 1)
+
+(defun set-exec-path-from-shell-PATH ()
+  "Set up Emacs' `exec-path' and PATH environment variable to match that used by the user's shell.
+
+This is particularly useful under Mac OSX, where GUI apps are not started from a shell.
+(http://stackoverflow.com/questions/8606954/path-and-exec-path-set-but-emacs-does-not-find-executable)"
+  (interactive)
+  (let ((path-from-shell (replace-regexp-in-string "[ \t\n]*$" "" (shell-command-to-string "$SHELL --login -i -c 'echo $PATH'"))))
+    (setenv "PATH" path-from-shell)
+    (setq exec-path (split-string path-from-shell path-separator))))
+(set-exec-path-from-shell-PATH)
 
 (provide 'nd-common-settings)
