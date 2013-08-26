@@ -46,12 +46,4 @@
              (define-key dired-mode-map (kbd "C-c t f") 'thread-dump-open-marked-files)
              ))
 
-;; Make dired less verbose
-(require 'package)
-(when (not (package-installed-p 'dired-details))
-  (package-install 'dired-details))
-(require 'dired-details)
-(setq-default dired-details-hidden-string "--- ")
-(dired-details-install)
-
 (provide 'nd-dired-settings)
