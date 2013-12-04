@@ -61,6 +61,34 @@
     (notmuch-mua-reply (notmuch-show-get-message-id) sender nil)))
 (define-key notmuch-show-mode-map "r" 'nd-notmuch-reply)
 
+
+(defun nd-notmuch-message-clean-To ()
+  "Removes teamcity-feedback@jetbrains.com from To header"
+  (let* ((To-field (message-fetch-field "To"))
+         (clean-To-field (mapconcat 'nd-make-address
+                                    (nd-get-non-feedback-addresses To-field)
+                                    ", ")))
+	  (save-restriction
+	    (message-narrow-to-headers)
+      (message-remove-header "To")
+      (insert (concat "To: " clean-To-field "\n")))))
+
+;;add hook at the end to run after gnus-alias-determine-identity
+(add-hook 'message-setup-hook 'nd-notmuch-message-clean-To 't)
+
+(defun nd-make-address (mail)
+  ;;mail in format (FULL-NAME CANONICAL-ADDRESS), FULL-NAME can be nil
+  (if (car mail)
+      (concat (car mail) " <" (cadr mail) ">")
+    (cadr mail)))
+
+(defun nd-get-non-feedback-addresses (To-field)
+  (let ((addresses (mail-extract-address-components To-field 't))
+        (acc))
+    (dolist (addr addresses acc)
+      (unless (string= (cadr addr) "teamcity-feedback@jetbrains.com")
+        (setq acc (cons addr acc))))))
+
 (defun nd-notmuch-archive ()
   (interactive)
   (notmuch-show-archive-message)
@@ -137,5 +165,6 @@ PROMPT overrides the default one used to ask user for a file name."
 
 ;; persist sent mail
 ;; ability to archive a whole thread, both from email and from search
+;; address book
 
 (provide 'nd-notmuch)
