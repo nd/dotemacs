@@ -79,4 +79,13 @@ This is particularly useful under Mac OSX, where GUI apps are not started from a
     (setq exec-path (split-string path-from-shell path-separator))))
 (set-exec-path-from-shell-PATH)
 
+;; warn when opening files bigger than 100MB
+(setq large-file-warning-threshold 100000000)
+
+;; seems to help a bit with long lines:
+;; http://comments.gmane.org/gmane.emacs.devel/159671,
+;; http://debbugs.gnu.org/cgi/bugreport.cgi?bug=13675
+(setq-default cache-long-line-scans t)
+(setq-default bidi-display-reordering nil)
+
 (provide 'nd-common-settings)
