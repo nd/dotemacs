@@ -1,0 +1,11 @@
+(global-set-key "\C-cua" '(lambda () (interactive) (insert-char #x0000e4)))
+(global-set-key "\C-cuA" '(lambda () (interactive) (insert-char #x0000c4)))
+(global-set-key "\C-cue" '(lambda () (interactive) (insert-char #x0000eb)))
+(global-set-key "\C-cuE" '(lambda () (interactive) (insert-char #x0000cb)))
+(global-set-key "\C-cuo" '(lambda () (interactive) (insert-char #x0000f6)))
+(global-set-key "\C-cuO" '(lambda () (interactive) (insert-char #x0000d6)))
+(global-set-key "\C-cuu" '(lambda () (interactive) (insert-char #x0000fc)))
+(global-set-key "\C-cuU" '(lambda () (interactive) (insert-char #x0000dc)))
+(global-set-key "\C-cus" '(lambda () (interactive) (insert-char #x0000df)))
+
+(provide 'nd-deutsch)
