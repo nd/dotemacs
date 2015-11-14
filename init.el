@@ -2,6 +2,13 @@
 
 (add-to-list 'load-path "~/.emacs.d/nd")
 
+(require 'package)
+(add-to-list
+   'package-archives
+   '("melpa" . "http://melpa.org/packages/")
+   t)
+(package-initialize)
+
 ;;settings that require no 3rd party code, should work with plain emacs:
 (require 'nd-common-settings)
 (require 'nd-global-keys)
