@@ -50,10 +50,6 @@
              (or (file-exists-p (file-name-directory buffer-file-name))
                  (make-directory (file-name-directory buffer-file-name) t))))
 
-;; session settings
-(desktop-save-mode 1)
-(setq desktop-save t)
-(add-to-list 'desktop-modes-not-to-save 'dired-mode)
 ;; save minibuffer history between sessions
 (savehist-mode 1)
 
