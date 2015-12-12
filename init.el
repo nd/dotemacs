@@ -23,7 +23,7 @@
 (require 'nd-server-settings)
 (require 'nd-startup-settings)
 (require 'nd-ediff-settings)
-(require 'tc-logs)
+(require 'nd-logs)
 
 ;;settings that require something (maybe not required on every machine)
 (require 'nd-git-settings)

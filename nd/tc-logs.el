@@ -31,16 +31,14 @@
       (let ((entry-num 0)
             (prev-entry-start nil))
         (do (= 0 (forward-line 1))
-            (let* ((c1 (following-char))
-                   (p (point))
-                   (c2 (char-after (+ p 24))))
-              (if (and (= c1 ?\[) (= c2 ?\]))
-                  (progn
-                    (put-text-property p (+ p 25) 'face 'bold)
-                    (if prev-entry-start
-                        (put-text-property prev-entry-start p 'tc-log-entry-num entry-num))
-                    (setq prev-entry-start p)
-                    (setq entry-num (+ entry-num 1)))))))))
+            (let ((p (point)))
+              (when (and (= (following-char) ?\[)
+                         (= (char-after (+ p 24)) ?\]))
+                ;(put-text-property p (+ p 25) 'face 'bold)
+                (when prev-entry-start
+                  (put-text-property prev-entry-start p 'tc-log-entry-num entry-num))
+                (setq prev-entry-start p)
+                (setq entry-num (1+ entry-num))))))))
   (set-buffer-modified-p nil))
 
 (defun tc-logs-next-entry ()
