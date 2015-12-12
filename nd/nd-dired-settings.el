@@ -29,6 +29,7 @@
 
 (add-hook 'dired-mode-hook 'nd-dired-keys)
 
+(add-to-list 'load-path "~/p/thread-dump.el")
 (require 'thread-dump)
 
 (defun thread-dump-open-dired-dir ()
