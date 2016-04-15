@@ -24,6 +24,11 @@
 (require 'nd-startup-settings)
 (require 'nd-ediff-settings)
 (require 'nd-logs)
+(require 'nd-sec)
+
+;;encryption
+(require 'epa-file)
+(epa-file-enable)
 
 ;;settings that require something (maybe not required on every machine)
 (require 'nd-git-settings)
