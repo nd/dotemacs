@@ -21,6 +21,12 @@
   (remq 'process-kill-buffer-query-function
          kill-buffer-query-functions))
 
+;; disable mouse
+(when (not (package-installed-p 'disable-mouse))
+  (package-install 'disable-mouse))
+(require 'disable-mouse)
+(global-disable-mouse-mode)
+
 ;; avoid mouse then typing
 (mouse-avoidance-mode 'banish)
 
