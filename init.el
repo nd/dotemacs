@@ -23,7 +23,7 @@
 (require 'nd-server-settings)
 (require 'nd-startup-settings)
 (require 'nd-ediff-settings)
-(require 'nd-logs)
+;(require 'nd-logs)
 (require 'nd-sec)
 
 ;;encryption

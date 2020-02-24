@@ -63,7 +63,11 @@
 (setq uniquify-after-kill-buffer-p t) ; rename after killing uniquified
 (setq uniquify-ignore-buffers-re "^\\*") ; don't muck with special buffers
 
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
+;(defun nd-delete-trailing-whitespace ()
+;  (interactive)
+;  ())
+
+;(add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 (winner-mode 1)
 
@@ -86,5 +90,7 @@ This is particularly useful under Mac OSX, where GUI apps are not started from a
 ;; http://debbugs.gnu.org/cgi/bugreport.cgi?bug=13675
 (setq-default cache-long-line-scans t)
 (setq-default bidi-display-reordering nil)
+
+(setq calendar-week-start-day 1)
 
 (provide 'nd-common-settings)

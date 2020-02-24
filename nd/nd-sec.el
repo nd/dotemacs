@@ -1,3 +1,9 @@
+;; To disable graphical prompt
+;; - add 'allow-emacs-pinentry' line to /home/nd/.gnupg/gpg-agent.conf
+;; - run 'gpgconf --reload gpg-agent'
+;; - set epa-pinentry-mode:
+(setq epa-pinentry-mode 'loopback)
+
 (defun nd-sec-copy-pwd ()
   (interactive)
   (let* ((secrets (nd-sec-read-secrets))
