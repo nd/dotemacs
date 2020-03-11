@@ -68,4 +68,6 @@
     (set-frame-height (selected-frame) (cdr height))
     (set-frame-width (selected-frame) (cdr width))))
 
+(setq split-window-preferred-function #'split-window-right)
+
 (provide 'nd-decorations)
